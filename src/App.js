@@ -159,40 +159,37 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <div>Lobby: {this.lobbyChannel}</div>
-        <div className="App">
-          {!this.state.isPlaying && (
-            <div>
-              <div className="button-container">
-                <button
-                  className="create-button "
-                  disabled={this.state.isDisabled}
-                  onClick={e => this.onPressCreate()}
-                >
-                  {" "}
-                  Create
-                </button>
-                <button
-                  className="join-button"
-                  onClick={e => this.onPressJoin()}
-                >
-                  {" "}
-                  Join
-                </button>
-              </div>
+      <div className="App">
+        {!this.state.isPlaying && (
+          <div className="index">
+            <div className="intro">
+              <img src={require("./spaces/introBoard.png")} />
             </div>
-          )}
-          {this.state.isPlaying && (
-            <Game
-              pubnub={this.pubnub}
-              gameChannel={this.gameChannel}
-              isRoomCreator={this.state.isRoomCreator}
-              myTurn={this.state.myTurn}
-              endGame={this.endGame}
-            />
-          )}
-        </div>
+            <div className="button-container">
+              <button
+                className="create-button"
+                disabled={this.state.isDisabled}
+                onClick={e => this.onPressCreate()}
+              >
+                {" "}
+                Create
+              </button>
+              <button className="join-button" onClick={e => this.onPressJoin()}>
+                {" "}
+                Join
+              </button>
+            </div>
+          </div>
+        )}
+        {this.state.isPlaying && (
+          <Game
+            pubnub={this.pubnub}
+            gameChannel={this.gameChannel}
+            isRoomCreator={this.state.isRoomCreator}
+            myTurn={this.state.myTurn}
+            endGame={this.endGame}
+          />
+        )}
       </div>
     );
   }

@@ -1,8 +1,49 @@
 .App {
   display: grid;
   height: 100%;
+  width: 100%;
   background-color: black;
   text-align: center;
+  background-clip: border-box;
+}
+
+.index {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  text-align: center;
+  position: fixed;
+}
+
+.intro {
+  margin-top: 3%;
+}
+
+.create-button {
+  margin-right: 5%;
+  background-color: #fccf00; /* Green */
+  border: none;
+  color: #2468b1;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.join-button {
+  margin-left: 5%;
+  background-color: #fccf00; /* Green */
+  border: none;
+  color: #2468b1;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 800px) {
