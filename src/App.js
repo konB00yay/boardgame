@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
 import Game from "./Game";
-import PubNubReact from "pubnub-react";
 import Swal from "sweetalert2";
 import shortid from "shortid";
-import * as keys from "./keys";
+import io from "socket.io-client";
+
+//Just beginning route for server
+const socket = io("http://localhost:4000");
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.pubnub = new PubNubReact({
-      publishKey: keys.PUBNUB_PUBLISHKEY,
-      subscribeKey: keys.PUBNUB_SUBSCRIBEKEY
-    });
 
     this.state = {
       isPlaying: false,
@@ -25,28 +23,17 @@ class App extends Component {
     this.lobbyChannel = null;
     this.gameChannel = null;
     this.roomId = null;
-    this.pubnub.init(this);
+    this.player = null;
   }
 
   componentDidUpdate() {
     // Check that the player is connected to a channel
     if (this.lobbyChannel != null) {
-      this.pubnub.getMessage(this.lobbyChannel, msg => {
-        // Start the game once an opponent joins the channel
-        if (msg.message.notRoomCreator) {
-          // Create a different channel for the game
-          this.gameChannel = "tictactoegame--" + this.roomId;
-          this.pubnub.subscribe({
-            channels: [this.gameChannel]
-          });
-
-          this.setState({
-            isPlaying: true
-          });
-
-          // Close the modals if they are opened
-          Swal.close();
-        }
+      socket.on("joined", data => {
+        this.setState({
+          isPlaying: true
+        });
+        Swal.close();
       });
     }
   }
@@ -54,15 +41,13 @@ class App extends Component {
   onPressCreate = e => {
     this.roomId = shortid.generate().substring(0, 5);
     this.lobbyChannel = "pdglobby--" + this.roomId; // Lobby channel name
-    this.pubnub.subscribe({
-      channels: [this.lobbyChannel],
-      withPresence: true // Checks the number of people in the channel
-    });
+    this.player = 1;
+    socket.emit("rooms", { id: this.lobbyChannel, action: "create" });
 
     Swal.fire({
       position: "top",
       allowOutsideClick: false,
-      title: "Share this room ID with your friend",
+      title: "Share this room ID with your friends",
       text: this.roomId,
       width: 275,
       padding: "0.7em",
@@ -112,49 +97,20 @@ class App extends Component {
     this.roomId = value;
     this.lobbyChannel = "pdglobby--" + this.roomId;
 
-    this.pubnub
-      .hereNow({
-        channels: [this.lobbyChannel]
-      })
-      .then(response => {
-        //Only let 6 players in?
-        if (response.totalOccupancy < 6) {
-          this.pubnub.subscribe({
-            channels: [this.lobbyChannel],
-            withPresence: true
-          });
+    socket.emit("rooms", { id: this.lobbyChannel, action: "join" });
 
-          this.setState({
-            inLobby: true
-          });
+    socket.emit("players", this.lobbyChannel);
+    socket.on("players", playerNumber => {
+      this.player = playerNumber;
 
-          this.pubnub.publish({
-            message: {
-              notRoomCreator: true
-            },
-            channel: this.lobbyChannel
-          });
-        } else {
-          // Game in progress
-          Swal.fire({
-            position: "top",
-            allowOutsideClick: false,
-            title: "Error",
-            text: "Game in progress. Try another room.",
-            width: 275,
-            padding: "0.7em",
-            customClass: {
-              heightAuto: false,
-              title: "title-class",
-              popup: "popup-class",
-              confirmButton: "button-class"
-            }
-          });
-        }
-      })
-      .catch(error => {
-        console.log(error);
+      this.setState({
+        isRoomCreator: false,
+        isDisabled: true, // Disable the 'Create' button
+        myTurn: false, // Player X makes the 1st move
+        inLobby: true,
+        isPlaying: true
       });
+    });
   };
 
   render() {
@@ -163,7 +119,7 @@ class App extends Component {
         {!this.state.isPlaying && (
           <div className="index">
             <div className="intro">
-              <img src={require("./spaces/introBoard.png")} />
+              <img src={require("./spaces/introBoard.png")} alt="" />
             </div>
             <div className="button-container">
               <button
@@ -183,11 +139,10 @@ class App extends Component {
         )}
         {this.state.isPlaying && (
           <Game
-            pubnub={this.pubnub}
             gameChannel={this.gameChannel}
             isRoomCreator={this.state.isRoomCreator}
             myTurn={this.state.myTurn}
-            endGame={this.endGame}
+            player={this.player}
           />
         )}
       </div>
