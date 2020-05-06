@@ -1,398 +1,519 @@
-import React from "react";
+import React, { Component } from "react";
+import Tile from "./Tile";
+import { GAME_BOARD } from "./consts";
 import "./Board.css";
 
-function Board() {
-  return (
-    <div className="row">
-      <div className="column">
-        <img
-          src={require("./spaces/space_09.png")}
-          className="space"
-          alt="space 9"
-        />
-        <img
-          src={require("./spaces/space_08.png")}
-          className="space"
-          alt="space 8"
-        />
-        <img
-          src={require("./spaces/space_07_gym_1.png")}
-          className="space"
-          alt="space 7"
-        />
-        <img
-          src={require("./spaces/space_06.png")}
-          className="space"
-          alt="space 6"
-        />
-        <img
-          src={require("./spaces/space_05.png")}
-          className="space"
-          alt="space 5"
-        />
-        <img
-          src={require("./spaces/space_04.png")}
-          className="space"
-          alt="space 4"
-        />
-        <img
-          src={require("./spaces/space_03.png")}
-          className="space"
-          alt="space 3"
-        />
-        <img
-          src={require("./spaces/space_02.png")}
-          className="space"
-          alt="space 2"
-        />
-        <img
-          src={require("./spaces/space_01.png")}
-          className="space"
-          alt="space 1"
-        />
+class Board extends Component {
+  render() {
+    return (
+      <div className="row">
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[9]}
+            positions={this.props.positions}
+            number={9}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[8]}
+            positions={this.props.positions}
+            number={8}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[7]}
+            positions={this.props.positions}
+            number={7}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[6]}
+            positions={this.props.positions}
+            number={6}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[5]}
+            positions={this.props.positions}
+            number={5}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[4]}
+            positions={this.props.positions}
+            number={4}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[3]}
+            positions={this.props.positions}
+            number={3}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[2]}
+            positions={this.props.positions}
+            number={2}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[1]}
+            positions={this.props.positions}
+            number={1}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[10]}
+            positions={this.props.positions}
+            number={10}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[39]}
+            positions={this.props.positions}
+            number={39}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[38]}
+            positions={this.props.positions}
+            number={38}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[37]}
+            positions={this.props.positions}
+            number={37}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[36]}
+            positions={this.props.positions}
+            number={36}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[35]}
+            positions={this.props.positions}
+            number={35}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[34]}
+            positions={this.props.positions}
+            number={34}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[33]}
+            positions={this.props.positions}
+            number={33}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[32]}
+            positions={this.props.positions}
+            number={32}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[11]}
+            positions={this.props.positions}
+            number={11}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[40]}
+            positions={this.props.positions}
+            number={40}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[61]}
+            positions={this.props.positions}
+            number={61}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[60]}
+            positions={this.props.positions}
+            number={60}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[59]}
+            positions={this.props.positions}
+            number={59}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[58]}
+            positions={this.props.positions}
+            number={58}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[57]}
+            positions={this.props.positions}
+            number={57}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[56]}
+            positions={this.props.positions}
+            number={56}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[31]}
+            positions={this.props.positions}
+            number={31}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[12]}
+            positions={this.props.positions}
+            number={12}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[41]}
+            positions={this.props.positions}
+            number={41}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[62]}
+            positions={this.props.positions}
+            number={62}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[75]}
+            positions={this.props.positions}
+            number={75}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[74]}
+            positions={this.props.positions}
+            number={74}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[73]}
+            positions={this.props.positions}
+            number={73}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[72]}
+            positions={this.props.positions}
+            number={72}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[55]}
+            positions={this.props.positions}
+            number={55}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[30]}
+            positions={this.props.positions}
+            number={30}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[13]}
+            positions={this.props.positions}
+            number={13}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[42]}
+            positions={this.props.positions}
+            number={42}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[63]}
+            positions={this.props.positions}
+            number={63}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[76]}
+            positions={this.props.positions}
+            number={76}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[81]}
+            positions={this.props.positions}
+            number={81}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[80]}
+            positions={this.props.positions}
+            number={80}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[71]}
+            positions={this.props.positions}
+            number={71}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[54]}
+            positions={this.props.positions}
+            number={54}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[29]}
+            positions={this.props.positions}
+            number={29}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[14]}
+            positions={this.props.positions}
+            number={14}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[43]}
+            positions={this.props.positions}
+            number={43}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[64]}
+            positions={this.props.positions}
+            number={64}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[77]}
+            positions={this.props.positions}
+            number={77}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[78]}
+            positions={this.props.positions}
+            number={78}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[79]}
+            positions={this.props.positions}
+            number={79}
+            class="intro"
+          />
+          <Tile
+            space={GAME_BOARD[70]}
+            positions={this.props.positions}
+            number={70}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[53]}
+            positions={this.props.positions}
+            number={53}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[28]}
+            positions={this.props.positions}
+            number={28}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[15]}
+            positions={this.props.positions}
+            number={15}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[44]}
+            positions={this.props.positions}
+            number={44}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[65]}
+            positions={this.props.positions}
+            number={65}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[66]}
+            positions={this.props.positions}
+            number={66}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[67]}
+            positions={this.props.positions}
+            number={67}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[68]}
+            positions={this.props.positions}
+            number={68}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[69]}
+            positions={this.props.positions}
+            number={69}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[52]}
+            positions={this.props.positions}
+            number={52}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[27]}
+            positions={this.props.positions}
+            number={27}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[16]}
+            positions={this.props.positions}
+            number={16}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[45]}
+            positions={this.props.positions}
+            number={45}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[46]}
+            positions={this.props.positions}
+            number={46}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[47]}
+            positions={this.props.positions}
+            number={47}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[48]}
+            positions={this.props.positions}
+            number={48}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[49]}
+            positions={this.props.positions}
+            number={49}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[50]}
+            positions={this.props.positions}
+            number={50}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[51]}
+            positions={this.props.positions}
+            number={51}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[26]}
+            positions={this.props.positions}
+            number={26}
+            class="space"
+          />
+        </div>
+        <div className="column">
+          <Tile
+            space={GAME_BOARD[17]}
+            positions={this.props.positions}
+            number={17}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[18]}
+            positions={this.props.positions}
+            number={18}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[19]}
+            positions={this.props.positions}
+            number={19}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[20]}
+            positions={this.props.positions}
+            number={20}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[21]}
+            positions={this.props.positions}
+            number={21}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[22]}
+            positions={this.props.positions}
+            number={22}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[23]}
+            positions={this.props.positions}
+            number={23}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[24]}
+            positions={this.props.positions}
+            number={24}
+            class="space"
+          />
+          <Tile
+            space={GAME_BOARD[25]}
+            positions={this.props.positions}
+            number={25}
+            class="space"
+          />
+        </div>
       </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_10.png")}
-          className="space"
-          alt="space 10"
-        />
-        <img
-          src={require("./spaces/space_39_silph_3.png")}
-          className="space"
-          alt="space 39"
-        />
-        <img
-          src={require("./spaces/space_38_silph_2.png")}
-          className="space"
-          alt="space38"
-        />
-        <img
-          src={require("./spaces/space_37_silph_1.png")}
-          className="space"
-          alt="space 37"
-        />
-        <img
-          src={require("./spaces/space_36.png")}
-          className="space"
-          alt="space 36"
-        />
-        <img
-          src={require("./spaces/space_35.png")}
-          className="space"
-          alt="space 35"
-        />
-        <img
-          src={require("./spaces/space_34.png")}
-          className="space"
-          alt="space 34"
-        />
-        <img
-          src={require("./spaces/space_33_gym_4.png")}
-          className="space"
-          alt="space 33"
-        />
-        <img
-          src={require("./spaces/space_32.png")}
-          className="space"
-          alt="space 32"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_11.png")}
-          className="space"
-          alt="space 11"
-        />
-        <img
-          src={require("./spaces/space_40_silph_4.png")}
-          className="space"
-          alt="space 40"
-        />
-        <img
-          src={require("./spaces/space_61.png")}
-          className="space"
-          alt="space 61"
-        />
-        <img
-          src={require("./spaces/space_60.png")}
-          className="space"
-          alt="space 60"
-        />
-        <img
-          src={require("./spaces/space_59_gym_7.png")}
-          className="space"
-          alt="space 59"
-        />
-        <img
-          src={require("./spaces/space_58.png")}
-          className="space"
-          alt="space 58"
-        />
-        <img
-          src={require("./spaces/space_57.png")}
-          className="space"
-          alt="space 57"
-        />
-        <img
-          src={require("./spaces/space_56.png")}
-          className="space"
-          alt="space 56"
-        />
-        <img
-          src={require("./spaces/space_31.png")}
-          className="space"
-          alt="space 31"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_12.png")}
-          className="space"
-          alt="space 12"
-        />
-        <img
-          src={require("./spaces/space_41_silph_5.png")}
-          className="space"
-          alt="space 41"
-        />
-        <img
-          src={require("./spaces/space_62.png")}
-          className="space"
-          alt="space 62"
-        />
-        <img src={require("./spaces/space_75_intro_3.png")} alt="space 75" />
-        <img src={require("./spaces/space_74_intro_2.png")} alt="space 74" />
-        <img src={require("./spaces/space_73_intro_1.png")} alt="space 73" />
-        <img
-          src={require("./spaces/space_72_champ.png")}
-          className="space"
-          alt="space 72"
-        />
-        <img
-          src={require("./spaces/space_55.png")}
-          className="space"
-          alt="space 55"
-        />
-        <img
-          src={require("./spaces/space_30.png")}
-          className="space"
-          alt="space 30"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_13.png")}
-          className="space"
-          alt="space 13"
-        />
-        <img
-          src={require("./spaces/space_42.png")}
-          className="space"
-          alt="space 42"
-        />
-        <img
-          src={require("./spaces/space_63.png")}
-          className="space"
-          alt="space 63"
-        />
-        <img src={require("./spaces/space_76_intro_4.png")} alt="space 76" />
-        <img src={require("./spaces/space_81_intro_9.png")} alt="space 81" />
-        <img src={require("./spaces/space_80_intro_8.png")} alt="space 80" />
-        <img
-          src={require("./spaces/space_71_gary.png")}
-          className="space"
-          alt="space 71"
-        />
-        <img
-          src={require("./spaces/space_54.png")}
-          className="space"
-          alt="space 54"
-        />
-        <img
-          src={require("./spaces/space_29.png")}
-          className="space"
-          alt="space 29"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_14_gym_2.png")}
-          className="space"
-          alt="space 14"
-        />
-        <img
-          src={require("./spaces/space_43.png")}
-          className="space"
-          alt="space 43"
-        />
-        <img
-          src={require("./spaces/space_64_gym_8.png")}
-          className="space"
-          alt="space 64"
-        />
-        <img src={require("./spaces/space_77_intro_5.png")} alt="space 77" />
-        <img src={require("./spaces/space_78_intro_6.png")} alt="space 78" />
-        <img src={require("./spaces/space_79_intro_7.png")} alt="space 79" />
-        <img
-          src={require("./spaces/space_70_four.png")}
-          className="space"
-          alt="space 70"
-        />
-        <img
-          src={require("./spaces/space_53_gym_6.png")}
-          className="space"
-          alt="space 53"
-        />
-        <img
-          src={require("./spaces/space_28_tower_5.png")}
-          className="space"
-          alt="space 28"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_15.png")}
-          className="space"
-          alt="space 15"
-        />
-        <img
-          src={require("./spaces/space_44_gym_5.png")}
-          className="space"
-          alt="space 44"
-        />
-        <img
-          src={require("./spaces/space_65.png")}
-          className="space"
-          alt="space 65"
-        />
-        <img
-          src={require("./spaces/space_66.png")}
-          className="space"
-          alt="space 66"
-        />
-        <img
-          src={require("./spaces/space_67.png")}
-          className="space"
-          alt="space 67"
-        />
-        <img
-          src={require("./spaces/space_68.png")}
-          className="space"
-          alt="space 68"
-        />
-        <img
-          src={require("./spaces/space_69_birds.png")}
-          className="space"
-          alt="space 69"
-        />
-        <img
-          src={require("./spaces/space_52_safari_4.png")}
-          className="space"
-          alt="space 52"
-        />
-        <img
-          src={require("./spaces/space_27_tower_4.png")}
-          className="space"
-          alt="space 27"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_16.png")}
-          className="space"
-          alt="space 16"
-        />
-        <img
-          src={require("./spaces/space_45.png")}
-          className="space"
-          alt="space 45"
-        />
-        <img
-          src={require("./spaces/space_46.png")}
-          className="space"
-          alt="space 46"
-        />
-        <img
-          src={require("./spaces/space_47.png")}
-          className="space"
-          alt="space 47"
-        />
-        <img
-          src={require("./spaces/space_48.png")}
-          className="space"
-          alt="space 48"
-        />
-        <img
-          src={require("./spaces/space_49_safari_1.png")}
-          className="space"
-          alt="space 49"
-        />
-        <img
-          src={require("./spaces/space_50_safari_2.png")}
-          className="space"
-          alt="space 50"
-        />
-        <img
-          src={require("./spaces/space_51_safari_3.png")}
-          className="space"
-          alt="space 51"
-        />
-        <img
-          src={require("./spaces/space_26_tower_3.png")}
-          className="space"
-          alt="space 26"
-        />
-      </div>
-      <div className="column">
-        <img
-          src={require("./spaces/space_17.png")}
-          className="space"
-          alt="space 17"
-        />
-        <img
-          src={require("./spaces/space_18.png")}
-          className="space"
-          alt="space 18"
-        />
-        <img
-          src={require("./spaces/space_19.png")}
-          className="space"
-          alt="space 19"
-        />
-        <img
-          src={require("./spaces/space_20_gym_3.png")}
-          className="space"
-          alt="space 20"
-        />
-        <img
-          src={require("./spaces/space_21.png")}
-          className="space"
-          alt="space 21"
-        />
-        <img
-          src={require("./spaces/space_22.png")}
-          className="space"
-          alt="space 22"
-        />
-        <img
-          src={require("./spaces/space_23.png")}
-          className="space"
-          alt="space 23"
-        />
-        <img
-          src={require("./spaces/space_24_tower_1.png")}
-          className="space"
-          alt="space 24"
-        />
-        <img
-          src={require("./spaces/space_25_tower_2.png")}
-          className="space"
-          alt="space 25"
-        />
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Board;

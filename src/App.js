@@ -16,8 +16,9 @@ class App extends Component {
       isPlaying: false,
       isRoomCreator: false,
       isDisabled: false,
-      myTurn: false,
-      inLobby: false
+      turn: false,
+      inLobby: false,
+      positions: {}
     };
 
     this.lobbyChannel = null;
@@ -30,9 +31,16 @@ class App extends Component {
     // Check that the player is connected to a channel
     if (this.lobbyChannel != null) {
       socket.on("joined", data => {
-        this.setState({
-          isPlaying: true
-        });
+        if (this.state.isPlaying) {
+          this.setState({
+            positions: data
+          });
+        } else {
+          this.setState({
+            isPlaying: true,
+            positions: data
+          });
+        }
         Swal.close();
       });
     }
@@ -42,6 +50,7 @@ class App extends Component {
     this.roomId = shortid.generate().substring(0, 5);
     this.lobbyChannel = "pdglobby--" + this.roomId; // Lobby channel name
     this.player = 1;
+
     socket.emit("rooms", { id: this.lobbyChannel, action: "create" });
 
     Swal.fire({
@@ -63,7 +72,7 @@ class App extends Component {
     this.setState({
       isRoomCreator: true,
       isDisabled: true, // Disable the 'Create' button
-      myTurn: true, // Player X makes the 1st move
+      turn: 1, // Player X makes the 1st move
       inLobby: true
     });
   };
@@ -100,15 +109,16 @@ class App extends Component {
     socket.emit("rooms", { id: this.lobbyChannel, action: "join" });
 
     socket.emit("players", this.lobbyChannel);
-    socket.on("players", playerNumber => {
-      this.player = playerNumber;
+    socket.on("players", positions => {
+      this.player = Object.keys(positions).length;
 
       this.setState({
         isRoomCreator: false,
         isDisabled: true, // Disable the 'Create' button
-        myTurn: false, // Player X makes the 1st move
+        turn: 1, // Player X makes the 1st move
         inLobby: true,
-        isPlaying: true
+        isPlaying: true,
+        positions: positions
       });
     });
   };
@@ -139,10 +149,11 @@ class App extends Component {
         )}
         {this.state.isPlaying && (
           <Game
-            gameChannel={this.gameChannel}
+            lobbyChannel={this.lobbyChannel}
             isRoomCreator={this.state.isRoomCreator}
-            myTurn={this.state.myTurn}
+            turn={this.state.turn}
             player={this.player}
+            positions={this.state.positions}
           />
         )}
       </div>

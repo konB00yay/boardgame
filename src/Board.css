@@ -19,14 +19,3 @@
   vertical-align: middle;
   width: 100%;
 }
-
-.space {
-  transition: transform 0.2s;
-}
-
-.space:hover {
-  transform: scale(2);
-  z-index: 999;
-  color: rgba(255, 255, 255, 1);
-  box-shadow: 0 5px 15px rgba(145, 120, 255, 1.5);
-}
