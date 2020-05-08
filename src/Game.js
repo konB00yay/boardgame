@@ -4,6 +4,7 @@ import "./Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
 import io from "socket.io-client";
+import * as tileAction from "./SpecialTiles";
 
 //Just beginning route for server
 const socket = io("http://localhost:4000");
@@ -18,9 +19,11 @@ class Game extends Component {
       turn: 1,
       inLobby: false,
       positions: {},
-      roll: 0
+      roll: 0,
+      pokemon: {}
     };
 
+    this.multiplier = 1;
     this.lobbyChannel = null;
     this.gameChannel = null;
     this.roomId = null;
@@ -33,24 +36,49 @@ class Game extends Component {
       socket.on("joined", data => {
         if (this.state.isPlaying) {
           this.setState({
-            positions: data
+            positions: data.positions,
+            pokemon: data.pokemon
           });
         } else {
           this.setState({
             isPlaying: true,
-            positions: data
+            positions: data.positions,
+            pokemon: data.pokemon
           });
         }
         Swal.close();
       });
-      socket.on("newTurn", data => {
-        console.log(data);
-        this.setState({
-          positions: data.newSpaces,
-          turn: data.newTurn
-        });
-      });
     }
+  }
+
+  componentDidMount() {
+    socket.on("moved", data => {
+      this.setState({
+        positions: data.newSpaces
+      });
+    });
+    socket.on("newTurn", data => {
+      this.setState({
+        turn: data.newTurn
+      });
+    });
+    socket.on("pokemonPicked", data => {
+      this.setState({
+        pokemon: data.newPokemon
+      });
+    });
+    socket.on("newGame", data => {
+      this.setState({
+        positions: data.positions,
+        pokemon: data.pokemon
+      });
+      Swal.close();
+    });
+    socket.on("playerReset", data => {
+      this.setState({
+        positions: data.positions
+      });
+    });
   }
 
   onPressCreate = e => {
@@ -130,6 +158,46 @@ class Game extends Component {
     });
   };
 
+  pickPokemon = () => {
+    Swal.fire({
+      title: "Pick a Pokemon!",
+      position: "top",
+      input: "select",
+      inputOptions: {
+        "1": "Bulbasaur",
+        "2": "Squirtle",
+        "3": "Charmander"
+      },
+      allowOutsideClick: false,
+      inputPlaceholder: "",
+      showCancelButton: true,
+      confirmButtonColor: "rgb(208,33,41)",
+      confirmButtonText: "OK",
+      width: 275,
+      padding: "0.7em",
+      customClass: {
+        heightAuto: false,
+        popup: "popup-class",
+        confirmButton: "join-button-class",
+        cancelButton: "join-button-class"
+      }
+    }).then(result => {
+      if (result.value !== "") {
+        socket.emit("pokemon", {
+          room: this.lobbyChannel,
+          player: this.player,
+          pokemon: result.value
+        });
+        this.setState(prevState => ({
+          pokemon: {
+            ...prevState.pokemon,
+            [this.player]: result.value
+          }
+        }));
+      }
+    });
+  };
+
   rollDice = () => {
     let rolled = Math.floor(Math.random() * 6 + 1);
     this.setState({
@@ -138,20 +206,30 @@ class Game extends Component {
   };
 
   go = () => {
-    let newPosition = this.state.positions[this.player] + this.state.roll;
-    let players = Object.keys(this.state.positions).length;
-    let newTurn = this.state.turn;
-    if (this.state.turn < players) {
-      newTurn = this.state.turn + 1;
-    } else {
-      newTurn = 1;
+    let newPosition =
+      this.state.positions[this.player] + this.state.roll * this.multiplier;
+    newPosition = tileAction.stopAtGym({
+      space: newPosition,
+      positions: this.state.positions,
+      thisPlayer: this.player
+    });
+    newPosition = tileAction.onAbra(newPosition);
+    this.multiplier = tileAction.bike(newPosition);
+
+    let pokemonSwitch = this.state.pokemon[this.player];
+    if (tileAction.pikachu(newPosition)) {
+      pokemonSwitch = 4;
+      socket.emit("pokemon", {
+        room: this.lobbyChannel,
+        player: this.player,
+        pokemon: pokemonSwitch
+      });
     }
 
     socket.emit("move", {
       room: this.lobbyChannel,
       player: this.player,
-      newSpace: newPosition,
-      turn: newTurn
+      newSpace: newPosition
     });
 
     this.setState(prevState => ({
@@ -159,9 +237,56 @@ class Game extends Component {
         ...prevState.positions,
         [this.player]: newPosition
       },
-      turn: newTurn
+      pokemon: {
+        ...prevState.pokemon,
+        [this.player]: pokemonSwitch
+      }
     }));
-    console.log(this.state);
+  };
+
+  nextPlayer = () => {
+    let players = Object.keys(this.state.positions).length;
+    let newTurn = this.state.turn;
+    if (this.state.turn < players) {
+      newTurn = this.state.turn + 1;
+    } else {
+      newTurn = 1;
+    }
+    socket.emit("nextTurn", {
+      room: this.lobbyChannel,
+      turn: newTurn
+    });
+    this.setState(prevState => ({
+      turn: newTurn,
+      roll: 0
+    }));
+  };
+
+  gameOver = () => {
+    Object.entries(this.state.positions).map(([key, value]) => {
+      if (value === 72) {
+        Swal.fire({
+          title: "Player " + key + " Wins!",
+          width: 275,
+          position: "center",
+          allowOutsideClick: false,
+          padding: "0.7em",
+          backdrop: "rgba(0,0,123,0.4)",
+          confirmButtonText: "New Game?"
+        }).then(result => {
+          socket.emit("reset", {
+            room: this.lobbyChannel
+          });
+        });
+      }
+    });
+  };
+
+  resetPlayer = () => {
+    socket.emit("resetPlayer", {
+      room: this.lobbyChannel,
+      player: this.player
+    });
   };
 
   render() {
@@ -203,9 +328,41 @@ class Game extends Component {
                     Go!
                   </button>
                 )}
+                <button
+                  className="next-player-button"
+                  onClick={e => this.nextPlayer()}
+                >
+                  {" "}
+                  Next Player
+                </button>
+                {tileAction.missingnoReset(
+                  this.state.positions[this.player]
+                ) && (
+                  <button
+                    className="reset-button"
+                    onClick={e => this.resetPlayer()}
+                  >
+                    {" "}
+                    Back to Square 1 :/
+                  </button>
+                )}
               </div>
             )}
-            <Board positions={this.state.positions} />
+            <Board
+              positions={this.state.positions}
+              pokemon={this.state.pokemon}
+              player={this.player}
+            />
+            {this.state.pokemon[this.player] === null && (
+              <button
+                className="pick-pokemon"
+                onClick={e => this.pickPokemon()}
+              >
+                {" "}
+                Pick a Pokemon
+              </button>
+            )}
+            {this.gameOver()}
           </div>
         )}
       </div>
