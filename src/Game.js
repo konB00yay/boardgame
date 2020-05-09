@@ -28,6 +28,7 @@ class Game extends Component {
     this.gameChannel = null;
     this.roomId = null;
     this.player = null;
+    this.specialTileAction = true;
   }
 
   componentDidUpdate() {
@@ -77,6 +78,11 @@ class Game extends Component {
     socket.on("playerReset", data => {
       this.setState({
         positions: data.positions
+      });
+    });
+    socket.on("displayRoll", data => {
+      this.setState({
+        roll: data.roll
       });
     });
   }
@@ -200,12 +206,18 @@ class Game extends Component {
 
   rollDice = () => {
     let rolled = Math.floor(Math.random() * 6 + 1);
+    socket.emit("rolled", {
+      room: this.lobbyChannel,
+      roll: rolled
+    });
+
     this.setState({
       roll: rolled
     });
   };
 
   go = () => {
+    this.specialTileAction = true;
     let newPosition =
       this.state.positions[this.player] + this.state.roll * this.multiplier;
     newPosition = tileAction.stopAtGym({
@@ -213,35 +225,7 @@ class Game extends Component {
       positions: this.state.positions,
       thisPlayer: this.player
     });
-    newPosition = tileAction.onAbra(newPosition);
-    this.multiplier = tileAction.bike(newPosition);
-
-    let pokemonSwitch = this.state.pokemon[this.player];
-    if (tileAction.pikachu(newPosition)) {
-      pokemonSwitch = 4;
-      socket.emit("pokemon", {
-        room: this.lobbyChannel,
-        player: this.player,
-        pokemon: pokemonSwitch
-      });
-    }
-
-    socket.emit("move", {
-      room: this.lobbyChannel,
-      player: this.player,
-      newSpace: newPosition
-    });
-
-    this.setState(prevState => ({
-      positions: {
-        ...prevState.positions,
-        [this.player]: newPosition
-      },
-      pokemon: {
-        ...prevState.pokemon,
-        [this.player]: pokemonSwitch
-      }
-    }));
+    this.spaceMutation(newPosition, this.player);
   };
 
   nextPlayer = () => {
@@ -279,14 +263,67 @@ class Game extends Component {
           });
         });
       }
+      return "";
     });
   };
 
   resetPlayer = () => {
+    this.specialTileAction = false;
     socket.emit("resetPlayer", {
       room: this.lobbyChannel,
       player: this.player
     });
+  };
+
+  playerOptions = () => {
+    let players = [];
+    Object.entries(this.state.positions).map(([key, value]) => {
+      players.push(
+        <option key={key} value={key}>
+          {"Player " + key}
+        </option>
+      );
+      return "";
+    });
+    return players;
+  };
+
+  onDropDownSelected = player => {
+    this.specialTileAction = false;
+    let newPosition = this.state.positions[player] - 10;
+    this.spaceMutation(newPosition, player);
+  };
+
+  spaceMutation = (newPosition, player) => {
+    newPosition = tileAction.onAbra(newPosition);
+    this.multiplier = tileAction.bike(newPosition);
+
+    let pokemonSwitch = this.state.pokemon[player];
+    if (tileAction.pikachu(newPosition)) {
+      pokemonSwitch = 4;
+      socket.emit("pokemon", {
+        room: this.lobbyChannel,
+        player: player,
+        pokemon: pokemonSwitch
+      });
+    }
+
+    socket.emit("move", {
+      room: this.lobbyChannel,
+      player: player,
+      newSpace: newPosition
+    });
+
+    this.setState(prevState => ({
+      positions: {
+        ...prevState.positions,
+        [player]: newPosition
+      },
+      pokemon: {
+        ...prevState.pokemon,
+        [player]: pokemonSwitch
+      }
+    }));
   };
 
   render() {
@@ -306,7 +343,10 @@ class Game extends Component {
                 {" "}
                 Create
               </button>
-              <button className="join-button" onClick={e => this.onPressJoin()}>
+              <button
+                className="join-button"
+                onClick={e => this.onPressJoin(e)}
+              >
                 {" "}
                 Join
               </button>
@@ -315,39 +355,61 @@ class Game extends Component {
         )}
         {this.state.isPlaying && (
           <div className="game">
-            {this.player === this.state.turn && (
-              <div className="roll">
-                <span className="dice-roll">{this.state.roll}</span>
-                <button className="roll-button" onClick={e => this.rollDice()}>
-                  {" "}
-                  Roll
-                </button>
-                {this.state.roll > 0 && (
-                  <button className="go-button" onClick={e => this.go()}>
-                    {" "}
-                    Go!
-                  </button>
-                )}
-                <button
-                  className="next-player-button"
-                  onClick={e => this.nextPlayer()}
-                >
-                  {" "}
-                  Next Player
-                </button>
-                {tileAction.missingnoReset(
-                  this.state.positions[this.player]
-                ) && (
+            {tileAction.haunter(this.state.positions[this.player]) &&
+              this.specialTileAction && (
+                <div className="haunter">
+                  <select
+                    className="dropdown"
+                    onChange={e => {
+                      this.onDropDownSelected(e.target.value);
+                    }}
+                  >
+                    <option key={0} value={0}>
+                      Eat Someone's Dream
+                    </option>
+                    {this.playerOptions()}
+                  </select>
+                </div>
+              )}
+            <div className="roll">
+              <div className="dice-roll">{this.state.roll}</div>
+              {this.player === this.state.turn && (
+                <div className="button-container">
                   <button
-                    className="reset-button"
-                    onClick={e => this.resetPlayer()}
+                    className="roll-button"
+                    onClick={e => this.rollDice()}
                   >
                     {" "}
-                    Back to Square 1 :/
+                    Roll
                   </button>
-                )}
-              </div>
-            )}
+                  {this.state.roll > 0 && (
+                    <button className="go-button" onClick={e => this.go()}>
+                      {" "}
+                      Go!
+                    </button>
+                  )}
+                  <button
+                    className="next-player-button"
+                    onClick={e => this.nextPlayer()}
+                  >
+                    {" "}
+                    Next Player
+                  </button>
+                  {tileAction.missingnoReset(
+                    this.state.positions[this.player]
+                  ) &&
+                    this.specialTileAction && (
+                      <button
+                        className="reset-button"
+                        onClick={e => this.resetPlayer()}
+                      >
+                        {" "}
+                        Back to Square 1 :/
+                      </button>
+                    )}
+                </div>
+              )}
+            </div>
             <Board
               positions={this.state.positions}
               pokemon={this.state.pokemon}
