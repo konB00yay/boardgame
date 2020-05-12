@@ -7,7 +7,19 @@ import io from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
 
 //Just beginning route for server
-const socket = io("http://localhost:4000");
+//https://vast-reaches-79428.herokuapp.com/
+let socket = io("http://localhost:4000");
+if (process.env.NODE_ENV === "production") {
+  socket = io("https://vast-reaches-79428.herokuapp.com/");
+}
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: "btn btn-success",
+    cancelButton: "btn btn-danger"
+  },
+  buttonsStyling: false
+});
 
 class Game extends Component {
   constructor(props) {
@@ -28,8 +40,28 @@ class Game extends Component {
     this.gameChannel = null;
     this.roomId = null;
     this.player = null;
+    this.playerName = null;
     this.specialTileAction = true;
+    this.evicted = 0;
   }
+
+  shareWithFriends = () => {
+    return {
+      position: "top",
+      allowOutsideClick: false,
+      title: "Share this room ID with your friends",
+      text: this.roomId,
+      width: 275,
+      padding: "0.7em",
+      // Custom CSS to change the size of the modal
+      customClass: {
+        heightAuto: false,
+        title: "title-class",
+        popup: "popup-class",
+        confirmButton: "button-class"
+      }
+    };
+  };
 
   componentDidUpdate() {
     // Check that the player is connected to a channel
@@ -54,9 +86,19 @@ class Game extends Component {
 
   componentDidMount() {
     socket.on("moved", data => {
-      this.setState({
-        positions: data.newSpaces
-      });
+      if (data.positions[this.player] === "REMOVED") {
+        this.setState({
+          isPlaying: false,
+          turn: 1,
+          positions: {},
+          roll: 0,
+          pokemon: {}
+        });
+      } else {
+        this.setState({
+          positions: data.positions
+        });
+      }
     });
     socket.on("newTurn", data => {
       this.setState({
@@ -75,11 +117,6 @@ class Game extends Component {
       });
       Swal.close();
     });
-    socket.on("playerReset", data => {
-      this.setState({
-        positions: data.positions
-      });
-    });
     socket.on("displayRoll", data => {
       this.setState({
         roll: data.roll
@@ -91,24 +128,11 @@ class Game extends Component {
     this.roomId = shortid.generate().substring(0, 5);
     this.lobbyChannel = "pdglobby--" + this.roomId; // Lobby channel name
     this.player = 1;
+    this.playerName = "Player " + this.player;
 
     socket.emit("rooms", { id: this.lobbyChannel, action: "create" });
 
-    Swal.fire({
-      position: "top",
-      allowOutsideClick: false,
-      title: "Share this room ID with your friends",
-      text: this.roomId,
-      width: 275,
-      padding: "0.7em",
-      // Custom CSS to change the size of the modal
-      customClass: {
-        heightAuto: false,
-        title: "title-class",
-        popup: "popup-class",
-        confirmButton: "button-class"
-      }
-    });
+    Swal.fire(this.shareWithFriends());
 
     this.setState({
       isRoomCreator: true,
@@ -151,7 +175,10 @@ class Game extends Component {
 
     socket.emit("players", this.lobbyChannel);
     socket.on("players", positions => {
-      this.player = Object.keys(positions).length;
+      if (this.player === null) {
+        this.player = Object.keys(positions).length;
+        this.playerName = "Player " + this.player;
+      }
 
       this.setState({
         isRoomCreator: false,
@@ -233,6 +260,9 @@ class Game extends Component {
     let newTurn = this.state.turn;
     if (this.state.turn < players) {
       newTurn = this.state.turn + 1;
+      if (this.state.positions[newTurn] === "REMOVED") {
+        this.nextPlayer();
+      }
     } else {
       newTurn = 1;
     }
@@ -278,20 +308,80 @@ class Game extends Component {
   playerOptions = () => {
     let players = [];
     Object.entries(this.state.positions).map(([key, value]) => {
-      players.push(
-        <option key={key} value={key}>
-          {"Player " + key}
-        </option>
-      );
+      if (value !== "REMOVED") {
+        players.push(
+          <option key={key} value={key}>
+            {"Player " + key}
+          </option>
+        );
+      }
       return "";
     });
     return players;
   };
 
-  onDropDownSelected = player => {
+  onHaunterSelected = player => {
     this.specialTileAction = false;
     let newPosition = this.state.positions[player] - 10;
     this.spaceMutation(newPosition, player);
+  };
+
+  evictPlayer = player => {
+    this.evicted += 1;
+    socket.emit("removePlayer", {
+      room: this.lobbyChannel,
+      player: player
+    });
+    if (this.evicted === Object.keys(this.state.positions).length - 1) {
+      swalWithBootstrapButtons
+        .fire({
+          title: "Not Enough Players",
+          text: "Delete game or invite more friends?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Invite More",
+          cancelButtonText: "Delete Game",
+          reverseButtons: true
+        })
+        .then(result => {
+          if (result.value) {
+            swalWithBootstrapButtons.fire(this.shareWithFriends());
+            socket.emit("lonePlayer", this.lobbyChannel);
+            this.evicted = 0;
+            this.setState({
+              positions: { 1: 1 },
+              pokemon: { 1: null },
+              turn: 1
+            });
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+              title: "Deleted",
+              text: "Your room has been deleted",
+              icon: "error",
+              timer: 1500
+            });
+            socket.emit("deleteRoom", this.lobbyChannel);
+            this.multiplier = 1;
+            this.lobbyChannel = null;
+            this.gameChannel = null;
+            this.roomId = null;
+            this.player = null;
+            this.playerName = null;
+            this.specialTileAction = true;
+            this.evicted = 0;
+            this.setState({
+              isPlaying: false,
+              isRoomCreator: false,
+              isDisabled: false,
+              turn: 1,
+              inLobby: false,
+              positions: {},
+              roll: 0,
+              pokemon: {}
+            });
+          }
+        });
+    }
   };
 
   spaceMutation = (newPosition, player) => {
@@ -355,13 +445,29 @@ class Game extends Component {
         )}
         {this.state.isPlaying && (
           <div className="game">
+            <div className="player-info">
+              <div className="player-name">{this.playerName}</div>
+              {this.state.isRoomCreator && (
+                <select
+                  className="dropdown"
+                  onChange={e => {
+                    this.evictPlayer(e.target.value);
+                  }}
+                >
+                  <option key={0} value={0}>
+                    Remove From Room
+                  </option>
+                  {this.playerOptions()}
+                </select>
+              )}
+            </div>
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
                 <div className="haunter">
                   <select
                     className="dropdown"
                     onChange={e => {
-                      this.onDropDownSelected(e.target.value);
+                      this.onHaunterSelected(e.target.value);
                     }}
                   >
                     <option key={0} value={0}>
