@@ -499,13 +499,6 @@ class Game extends Component {
                             Go!
                           </button>
                         )}
-                        <button
-                          className="next-player-button"
-                          onClick={e => this.nextPlayer()}
-                        >
-                          {" "}
-                          Next Player
-                        </button>
                         {tileAction.missingnoReset(
                           this.state.positions[this.player]
                         ) &&
@@ -523,7 +516,20 @@ class Game extends Component {
                   </div>
                 </Nav>
               </Navbar.Collapse>
-              <Nav pullright="true">{this.whoseTurn()}</Nav>
+              <Nav id="playersTurns" pullright="true">
+                {this.player === this.state.turn && (
+                  <Nav pullright="true">
+                    <button
+                      className="next-player-button"
+                      onClick={e => this.nextPlayer()}
+                    >
+                      {" "}
+                      Next Player
+                    </button>
+                  </Nav>
+                )}
+                {this.whoseTurn()}
+              </Nav>
             </Navbar>
             <div className="player-info" />
             {tileAction.haunter(this.state.positions[this.player]) &&

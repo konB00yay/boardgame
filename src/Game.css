@@ -11,13 +11,13 @@
 }
 
 .roll-button {
-  width: 125px;
+  width: 50px;
   position: absolute;
-  left: 40px;
-  background-color: #fccf00;
+  left: 115px;
+  background-color: #2468b1;
   border: none;
-  color: #2468b1;
-  padding: 8px 20px;
+  color: #fccf00;
+  padding: 8px 12px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -28,20 +28,23 @@
 .go-button {
   width: 50px;
   position: absolute;
-  top: 67px;
-  left: 170px;
+  left: 225px;
   background-color: #039003;
   border: none;
+  padding: 8px 14px;
   text-align: center;
   text-decoration: none;
+  display: inline-block;
   font-size: 16px;
   cursor: pointer;
 }
 
+#playersTurns {
+  display: contents;
+}
+
 .next-player-button {
   width: 125px;
-  position: absolute;
-  left: 225px;
   background-color: #fccf00;
   border: none;
   color: #2468b1;
@@ -51,17 +54,17 @@
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
+  margin-right: 5px;
 }
 
 .reset-button {
   width: 160px;
   position: absolute;
-  top: 90px;
-  left: 72px;
+  left: 280px;
   background-color: #fccf00;
   border: none;
   color: #2468b1;
-  padding: 10px 15px;
+  padding: 8px 15px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
