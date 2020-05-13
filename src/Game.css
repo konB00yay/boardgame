@@ -1,20 +1,23 @@
 .roll {
-  height: 100px;
+  height: 40px;
   width: 400px;
-  margin-left: 35%;
+  position: fixed;
+  left: 35%;
+}
+
+.spacing {
   position: relative;
+  width: 93px;
 }
 
 .roll-button {
-  width: 142px;
+  width: 125px;
   position: absolute;
-  top: 40px;
-  left: 23px;
-  margin-bottom: 10px;
+  left: 40px;
   background-color: #fccf00;
   border: none;
   color: #2468b1;
-  padding: 15px 32px;
+  padding: 8px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -36,15 +39,13 @@
 }
 
 .next-player-button {
-  width: 142px;
+  width: 125px;
   position: absolute;
-  top: 40px;
   left: 225px;
-  margin-bottom: 10px;
   background-color: #fccf00;
   border: none;
   color: #2468b1;
-  padding: 15px 32px;
+  padding: 8px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -69,14 +70,13 @@
 }
 
 .dice-roll {
-  top: 10px;
-  height: 55px;
+  height: 40px;
   width: 50px;
   left: 170px;
   color: black;
   background: white;
   background-color: white;
-  font-size: 48px;
+  font-size: 30px;
   position: absolute;
 }
 
@@ -88,7 +88,14 @@
 }
 
 .dropdown {
-  font-size: 16px;
+  background-color: #ee1515;
+  color: black;
+  display: block;
+  height: 33px;
+  line-height: 40px;
+  text-decoration: none;
+  width: 100px;
+  text-align: center;
 }
 
 .pick-pokemon {
@@ -102,20 +109,4 @@
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
-}
-
-.player-info {
-  margin-top: 10px;
-  width: 150px;
-}
-
-.player-name {
-  color: white;
-  width: 100px;
-}
-
-#turn {
-  position: absolute;
-  margin-left: inherit;
-  margin-top: -20px;
 }

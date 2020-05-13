@@ -1,10 +1,12 @@
 import React, { Component } from "react";
+import { Navbar, Nav } from "react-bootstrap";
 import Board from "./Board";
 import "./Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
 import io from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 //Just beginning route for server
 //https://vast-reaches-79428.herokuapp.com/
@@ -453,22 +455,77 @@ class Game extends Component {
         )}
         {this.state.isPlaying && (
           <div className="game">
-            <div className="player-info">
-              <div className="player-name">{this.playerName}</div>
-              {this.state.isRoomCreator && (
-                <select
-                  className="dropdown"
-                  onChange={e => {
-                    this.evictPlayer(e.target.value);
-                  }}
-                >
-                  <option key={0} value={0}>
-                    Remove From Room
-                  </option>
-                  {this.playerOptions()}
-                </select>
-              )}
-            </div>
+            <Navbar sticky="top" bg="light">
+              <Navbar.Brand className="player-name">
+                {this.playerName}
+              </Navbar.Brand>
+              <Navbar.Collapse>
+                <Nav className="spacing">
+                  {this.state.isRoomCreator && (
+                    <select
+                      className="dropdown"
+                      title="Remove"
+                      onChange={e => {
+                        this.evictPlayer(e.target.value);
+                      }}
+                    >
+                      <option key={0} value={0}>
+                        Remove
+                      </option>
+                      {this.playerOptions()}
+                    </select>
+                  )}
+                </Nav>
+                <Nav className="roll">
+                  <div className="button-container">
+                    {this.player === this.state.turn && (
+                      <button
+                        className="roll-button"
+                        onClick={e => this.rollDice()}
+                      >
+                        {" "}
+                        Roll
+                      </button>
+                    )}
+                    <div className="dice-roll">{this.state.roll}</div>
+                    {this.player === this.state.turn && (
+                      <div>
+                        {this.state.roll > 0 && (
+                          <button
+                            className="go-button"
+                            onClick={e => this.go()}
+                          >
+                            {" "}
+                            Go!
+                          </button>
+                        )}
+                        <button
+                          className="next-player-button"
+                          onClick={e => this.nextPlayer()}
+                        >
+                          {" "}
+                          Next Player
+                        </button>
+                        {tileAction.missingnoReset(
+                          this.state.positions[this.player]
+                        ) &&
+                          this.specialTileAction && (
+                            <button
+                              className="reset-button"
+                              onClick={e => this.resetPlayer()}
+                            >
+                              {" "}
+                              Back to Square 1 :/
+                            </button>
+                          )}
+                      </div>
+                    )}
+                  </div>
+                </Nav>
+              </Navbar.Collapse>
+              <Nav pullright="true">{this.whoseTurn()}</Nav>
+            </Navbar>
+            <div className="player-info" />
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
                 <div className="haunter">
@@ -485,48 +542,6 @@ class Game extends Component {
                   </select>
                 </div>
               )}
-            <div className="roll">
-              <div className="player-name" id="turn">
-                {this.whoseTurn()}
-              </div>
-              <div className="dice-roll">{this.state.roll}</div>
-              {this.player === this.state.turn && (
-                <div className="button-container">
-                  <button
-                    className="roll-button"
-                    onClick={e => this.rollDice()}
-                  >
-                    {" "}
-                    Roll
-                  </button>
-                  {this.state.roll > 0 && (
-                    <button className="go-button" onClick={e => this.go()}>
-                      {" "}
-                      Go!
-                    </button>
-                  )}
-                  <button
-                    className="next-player-button"
-                    onClick={e => this.nextPlayer()}
-                  >
-                    {" "}
-                    Next Player
-                  </button>
-                  {tileAction.missingnoReset(
-                    this.state.positions[this.player]
-                  ) &&
-                    this.specialTileAction && (
-                      <button
-                        className="reset-button"
-                        onClick={e => this.resetPlayer()}
-                      >
-                        {" "}
-                        Back to Square 1 :/
-                      </button>
-                    )}
-                </div>
-              )}
-            </div>
             <Board
               positions={this.state.positions}
               pokemon={this.state.pokemon}

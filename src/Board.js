@@ -6,8 +6,8 @@ import "./Board.css";
 class Board extends Component {
   render() {
     return (
-      <div className="row">
-        <div className="column">
+      <div id="row">
+        <div id="column">
           <Tile
             space={GAME_BOARD[9]}
             positions={this.props.positions}
@@ -72,7 +72,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[10]}
             positions={this.props.positions}
@@ -137,7 +137,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[11]}
             positions={this.props.positions}
@@ -202,7 +202,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[12]}
             positions={this.props.positions}
@@ -267,7 +267,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[13]}
             positions={this.props.positions}
@@ -332,7 +332,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[14]}
             positions={this.props.positions}
@@ -397,7 +397,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[15]}
             positions={this.props.positions}
@@ -462,7 +462,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[16]}
             positions={this.props.positions}
@@ -527,7 +527,7 @@ class Board extends Component {
             class="space"
           />
         </div>
-        <div className="column">
+        <div id="column">
           <Tile
             space={GAME_BOARD[17]}
             positions={this.props.positions}
