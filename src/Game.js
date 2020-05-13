@@ -416,6 +416,14 @@ class Game extends Component {
     }));
   };
 
+  whoseTurn = () => {
+    if (this.state.turn !== this.player) {
+      return "Player " + this.state.turn + "s turn";
+    } else {
+      return "Your turn";
+    }
+  };
+
   render() {
     return (
       <div>
@@ -478,6 +486,9 @@ class Game extends Component {
                 </div>
               )}
             <div className="roll">
+              <div className="player-name" id="turn">
+                {this.whoseTurn()}
+              </div>
               <div className="dice-roll">{this.state.roll}</div>
               {this.player === this.state.turn && (
                 <div className="button-container">
