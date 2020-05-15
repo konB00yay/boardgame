@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import Board from "./Board";
+import Battle from "./Battle";
 import "./Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
@@ -45,6 +46,7 @@ class Game extends Component {
     this.playerName = null;
     this.specialTileAction = true;
     this.evicted = 0;
+    this.gym = false;
   }
 
   shareWithFriends = () => {
@@ -249,11 +251,13 @@ class Game extends Component {
     this.specialTileAction = true;
     let newPosition =
       this.state.positions[this.player] + this.state.roll * this.multiplier;
-    newPosition = tileAction.stopAtGym({
+    let data = tileAction.stopAtGym({
       space: newPosition,
       positions: this.state.positions,
       thisPlayer: this.player
     });
+    newPosition = data.newPosition;
+    this.gym = data.gym;
     this.spaceMutation(newPosition, this.player);
   };
 
@@ -508,7 +512,7 @@ class Game extends Component {
                               onClick={e => this.resetPlayer()}
                             >
                               {" "}
-                              Back to Square 1 :/
+                              Glitch to Pallet Town
                             </button>
                           )}
                       </div>
@@ -531,7 +535,6 @@ class Game extends Component {
                 {this.whoseTurn()}
               </Nav>
             </Navbar>
-            <div className="player-info" />
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
                 <div className="haunter">

@@ -43,8 +43,8 @@ export const stopAtGym = data => {
   let oldPosition = data.positions[data.thisPlayer];
   for (const stop of HARD_STOPS) {
     if (oldPosition < stop && data.space > stop) {
-      return stop;
+      return { newPosition: stop, gym: true };
     }
   }
-  return data.space;
+  return { newPosition: data.space, gym: false };
 };

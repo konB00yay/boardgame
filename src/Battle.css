@@ -1,0 +1,7 @@
+.battle-scene {
+  height: 1000px;
+  width: 1000px;
+  z-index: 9999999;
+  background-color: white;
+  color: black;
+}
