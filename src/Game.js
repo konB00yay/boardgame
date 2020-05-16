@@ -11,10 +11,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 //Just beginning route for server
 //https://vast-reaches-79428.herokuapp.com/
-let socket = io("http://localhost:4000");
+let socket_url = "http://localhost:4000";
 if (process.env.NODE_ENV === "production") {
-  socket = io("https://vast-reaches-79428.herokuapp.com/");
+  socket_url = "https://vast-reaches-79428.herokuapp.com/";
 }
+
+const socket = io(socket_url);
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
