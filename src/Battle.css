@@ -1,7 +1,72 @@
 .battle-scene {
-  height: 1000px;
-  width: 1000px;
-  z-index: 9999999;
-  background-color: white;
+  height: 500px;
+  width: 500px;
+  z-index: 1000;
   color: black;
+  position: absolute;
+  margin-left: 30%;
+  margin-top: 12%;
+  background-color: beige;
+  box-shadow: 0 0px 175px rgba(136, 154, 168, 1);
+  opacity: 0.94;
+  display: grid;
+  grid-template-columns: 166.67px 166.67px 166.67px;
+}
+
+.battling-player {
+  display: inline-block;
+  margin-top: 50%;
+}
+
+.vs {
+  font-size: 48px;
+  margin: auto;
+}
+
+.nextBattler {
+  font-size: 24px;
+  display: block;
+}
+
+.pokemon {
+  width: 90px;
+  height: 80px;
+  display: flex;
+  margin: inherit;
+  margin-left: 40px;
+}
+
+.playerName {
+  position: relative;
+  font-size: 24px;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+}
+
+.battle-button {
+  width: 50px;
+  position: absolute;
+  background-color: #2468b1;
+  border: none;
+  color: #fccf00;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 20px;
+  margin-left: -25px;
+}
+
+.battle-roll {
+  height: 40px;
+  width: 50px;
+  margin-top: 6%;
+  color: black;
+  background: white;
+  background-color: white;
+  font-size: 30px;
+  position: absolute;
+  margin-left: 12%;
 }

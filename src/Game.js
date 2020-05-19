@@ -37,7 +37,10 @@ class Game extends Component {
       inLobby: false,
       positions: {},
       roll: 0,
-      pokemon: {}
+      pokemon: {},
+      battling: [],
+      battleRollOne: 0,
+      battleRollTwo: 0
     };
 
     this.multiplier = 1;
@@ -98,11 +101,13 @@ class Game extends Component {
           turn: 1,
           positions: {},
           roll: 0,
-          pokemon: {}
+          pokemon: {},
+          battling: []
         });
       } else {
         this.setState({
-          positions: data.positions
+          positions: data.positions,
+          battling: data.battling
         });
       }
     });
@@ -126,6 +131,21 @@ class Game extends Component {
     socket.on("displayRoll", data => {
       this.setState({
         roll: data.roll
+      });
+    });
+    socket.on("battleRollOne", data => {
+      this.setState({
+        battleRollOne: data.roll
+      });
+    });
+    socket.on("battleRollTwo", data => {
+      this.setState({
+        battleRollTwo: data.roll
+      });
+    });
+    socket.on("newBattlePlayer", data => {
+      this.setState({
+        battling: data.battling
       });
     });
   }
@@ -246,6 +266,32 @@ class Game extends Component {
 
     this.setState({
       roll: rolled
+    });
+  };
+
+  rollBattleDieOne = () => {
+    let rolled = Math.floor(Math.random() * 6 + 1);
+    console.log("One");
+    socket.emit("battleRolledOne", {
+      room: this.lobbyChannel,
+      battleRollOne: rolled
+    });
+
+    this.setState({
+      battleRollOne: rolled
+    });
+  };
+
+  rollBattleDieTwo = () => {
+    console.log("Two");
+    let rolled = Math.floor(Math.random() * 6 + 1);
+    socket.emit("battleRolledTwo", {
+      room: this.lobbyChannel,
+      battleRollTwo: rolled
+    });
+
+    this.setState({
+      battleRollTwo: rolled
     });
   };
 
@@ -385,7 +431,8 @@ class Game extends Component {
               inLobby: false,
               positions: {},
               roll: 0,
-              pokemon: {}
+              pokemon: {},
+              battling: []
             });
           }
         });
@@ -406,10 +453,23 @@ class Game extends Component {
       });
     }
 
+    let playersBattling = [];
+    if (!this.gym) {
+      playersBattling.push(this.player);
+      for (const player in Object.keys(this.state.positions)) {
+        if (parseInt(player) !== this.player) {
+          if (this.state.positions[player] === newPosition) {
+            playersBattling.push(parseInt(player));
+          }
+        }
+      }
+    }
+
     socket.emit("move", {
       room: this.lobbyChannel,
       player: player,
-      newSpace: newPosition
+      newSpace: newPosition,
+      battling: playersBattling
     });
 
     this.setState(prevState => ({
@@ -420,7 +480,8 @@ class Game extends Component {
       pokemon: {
         ...prevState.pokemon,
         [player]: pokemonSwitch
-      }
+      },
+      battling: playersBattling
     }));
   };
 
@@ -430,6 +491,19 @@ class Game extends Component {
     } else {
       return "Your turn";
     }
+  };
+
+  nextBattle = () => {
+    let newBattle = this.state.battling;
+    newBattle.splice(1, 1);
+    socket.emit("newBattle", {
+      room: this.lobbyChannel,
+      battling: newBattle
+    });
+
+    this.setState({
+      battling: newBattle
+    });
   };
 
   render() {
@@ -465,7 +539,7 @@ class Game extends Component {
               <Navbar.Brand className="player-name">
                 {this.playerName}
               </Navbar.Brand>
-              <Navbar.Collapse>
+              <Navbar.Collapse className="navCollapse">
                 <Nav className="spacing">
                   {this.state.isRoomCreator && (
                     <select
@@ -483,8 +557,9 @@ class Game extends Component {
                   )}
                 </Nav>
                 <Nav className="roll">
-                  <div className="button-container">
-                    {this.player === this.state.turn && (
+                  {this.player === this.state.turn && (
+                    <div className="pokeball" id="rollPokeball">
+                      <figure className="pokeballTop" id="rollPokeballTop" />
                       <button
                         className="roll-button"
                         onClick={e => this.rollDice()}
@@ -492,11 +567,22 @@ class Game extends Component {
                         {" "}
                         Roll
                       </button>
-                    )}
+                      <figure
+                        className="pokeballBottom"
+                        id="rollPokeballBottom"
+                      />
+                    </div>
+                  )}
+                  <div className="pokeball">
+                    <figure className="pokeballTop" />
                     <div className="dice-roll">{this.state.roll}</div>
-                    {this.player === this.state.turn && (
-                      <div>
-                        {this.state.roll > 0 && (
+                    <figure className="pokeballBottom" />
+                  </div>
+                  {this.player === this.state.turn && (
+                    <div>
+                      {this.state.roll > 0 && (
+                        <div className="pokeball" id="goPokeball">
+                          <figure className="pokeballTop" id="goPokeballTop" />
                           <button
                             className="go-button"
                             onClick={e => this.go()}
@@ -504,22 +590,26 @@ class Game extends Component {
                             {" "}
                             Go!
                           </button>
+                          <figure
+                            className="pokeballBottom"
+                            id="goPokeballBottom"
+                          />
+                        </div>
+                      )}
+                      {tileAction.missingnoReset(
+                        this.state.positions[this.player]
+                      ) &&
+                        this.specialTileAction && (
+                          <button
+                            className="reset-button"
+                            onClick={e => this.resetPlayer()}
+                          >
+                            {" "}
+                            Glitch to Pallet Town
+                          </button>
                         )}
-                        {tileAction.missingnoReset(
-                          this.state.positions[this.player]
-                        ) &&
-                          this.specialTileAction && (
-                            <button
-                              className="reset-button"
-                              onClick={e => this.resetPlayer()}
-                            >
-                              {" "}
-                              Glitch to Pallet Town
-                            </button>
-                          )}
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </Nav>
               </Navbar.Collapse>
               <Nav id="playersTurns" pullright="true">
@@ -553,11 +643,27 @@ class Game extends Component {
                   </select>
                 </div>
               )}
-            <Board
-              positions={this.state.positions}
-              pokemon={this.state.pokemon}
-              player={this.player}
-            />
+            <div className="gameBoard">
+              <Board
+                positions={this.state.positions}
+                pokemon={this.state.pokemon}
+                player={this.player}
+              />
+              {this.state.battling !== undefined &&
+                this.state.battling.length > 1 && (
+                  <Battle
+                    className="board-battle"
+                    players={this.state.battling}
+                    rollOne={this.rollBattleDieOne}
+                    rollTwo={this.rollBattleDieTwo}
+                    battleRollOne={this.state.battleRollOne}
+                    battleRollTwo={this.state.battleRollTwo}
+                    player={this.player}
+                    pokemon={this.state.pokemon}
+                    nextBattle={this.nextBattle}
+                  />
+                )}
+            </div>
             {this.state.pokemon[this.player] === null && (
               <button
                 className="pick-pokemon"
