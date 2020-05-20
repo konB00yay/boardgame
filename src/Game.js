@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Navbar, Nav } from "react-bootstrap";
 import Board from "./Board";
 import Battle from "./Battle";
+import Intro from "./Intro";
+import PokeNav from "./PokeNav";
 import "./Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
@@ -510,123 +511,30 @@ class Game extends Component {
     return (
       <div>
         {!this.state.isPlaying && (
-          <div className="index">
-            <div className="intro">
-              <img src={require("./spaces/introBoard.png")} alt="" />
-            </div>
-            <div className="button-container">
-              <button
-                className="create-button"
-                disabled={this.state.isDisabled}
-                onClick={e => this.onPressCreate()}
-              >
-                {" "}
-                Create
-              </button>
-              <button
-                className="join-button"
-                onClick={e => this.onPressJoin(e)}
-              >
-                {" "}
-                Join
-              </button>
-            </div>
-          </div>
+          <Intro
+            disabled={this.state.isDisabled}
+            create={this.onPressCreate}
+            join={this.onPressJoin}
+          />
         )}
         {this.state.isPlaying && (
           <div className="game">
-            <Navbar sticky="top" bg="light">
-              <Navbar.Brand className="player-name">
-                {this.playerName}
-              </Navbar.Brand>
-              <Navbar.Collapse className="navCollapse">
-                <Nav className="spacing">
-                  {this.state.isRoomCreator && (
-                    <select
-                      className="dropdown"
-                      title="Remove"
-                      onChange={e => {
-                        this.evictPlayer(e.target.value);
-                      }}
-                    >
-                      <option key={0} value={0}>
-                        Remove
-                      </option>
-                      {this.playerOptions()}
-                    </select>
-                  )}
-                </Nav>
-                <Nav className="roll">
-                  {this.player === this.state.turn && (
-                    <div className="pokeball" id="rollPokeball">
-                      <figure className="pokeballTop" id="rollPokeballTop" />
-                      <button
-                        className="roll-button"
-                        onClick={e => this.rollDice()}
-                      >
-                        {" "}
-                        Roll
-                      </button>
-                      <figure
-                        className="pokeballBottom"
-                        id="rollPokeballBottom"
-                      />
-                    </div>
-                  )}
-                  <div className="pokeball">
-                    <figure className="pokeballTop" />
-                    <div className="dice-roll">{this.state.roll}</div>
-                    <figure className="pokeballBottom" />
-                  </div>
-                  {this.player === this.state.turn && (
-                    <div>
-                      {this.state.roll > 0 && (
-                        <div className="pokeball" id="goPokeball">
-                          <figure className="pokeballTop" id="goPokeballTop" />
-                          <button
-                            className="go-button"
-                            onClick={e => this.go()}
-                          >
-                            {" "}
-                            Go!
-                          </button>
-                          <figure
-                            className="pokeballBottom"
-                            id="goPokeballBottom"
-                          />
-                        </div>
-                      )}
-                      {tileAction.missingnoReset(
-                        this.state.positions[this.player]
-                      ) &&
-                        this.specialTileAction && (
-                          <button
-                            className="reset-button"
-                            onClick={e => this.resetPlayer()}
-                          >
-                            {" "}
-                            Glitch to Pallet Town
-                          </button>
-                        )}
-                    </div>
-                  )}
-                </Nav>
-              </Navbar.Collapse>
-              <Nav id="playersTurns" pullright="true">
-                {this.player === this.state.turn && (
-                  <Nav pullright="true">
-                    <button
-                      className="next-player-button"
-                      onClick={e => this.nextPlayer()}
-                    >
-                      {" "}
-                      Next Player
-                    </button>
-                  </Nav>
-                )}
-                {this.whoseTurn()}
-              </Nav>
-            </Navbar>
+            <PokeNav
+              roomCreater={this.state.isRoomCreator}
+              playerName={this.playerName}
+              evictPlayer={this.evictPlayer}
+              playerOptions={this.playerOptions}
+              player={this.player}
+              turn={this.state.turn}
+              roll={this.rollDice}
+              diceRoll={this.state.roll}
+              go={this.go}
+              positions={this.state.positions}
+              specialTile={this.specialTileAction}
+              reset={this.resetPlayer}
+              next={this.nextPlayer}
+              whoseTurn={this.whoseTurn}
+            />
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
                 <div className="haunter">
