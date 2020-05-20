@@ -42,7 +42,7 @@ export const onAbra = space => {
 export const stopAtGym = data => {
   let oldPosition = data.positions[data.thisPlayer];
   for (const stop of HARD_STOPS) {
-    if (oldPosition < stop && data.space > stop) {
+    if (oldPosition < stop && data.space >= stop) {
       return { newPosition: stop, gym: true };
     }
   }
