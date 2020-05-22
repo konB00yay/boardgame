@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Tile from "./Tile";
-import { GAME_BOARD } from "./consts";
-import "./Board.css";
+import { GAME_BOARD } from "../consts";
+import "../Styles/Board.css";
 
 class Board extends Component {
   render() {

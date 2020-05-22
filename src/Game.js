@@ -1,17 +1,16 @@
 import React, { Component } from "react";
-import Board from "./Board";
-import Battle from "./Battle";
-import Intro from "./Intro";
-import PokeNav from "./PokeNav";
-import "./Game.css";
+import Board from "./Components/Board";
+import Battle from "./Components/Battle";
+import Intro from "./Components/Intro";
+import PokeNav from "./Components/PokeNav";
+import * as alerts from "./Alerts";
+import "./Styles/Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
 import io from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-//Just beginning route for server
-//https://vast-reaches-79428.herokuapp.com/
 let socket_url = "http://localhost:4000";
 if (process.env.NODE_ENV === "production") {
   socket_url = "https://vast-reaches-79428.herokuapp.com/";
@@ -55,26 +54,7 @@ class Game extends Component {
     this.gym = false;
   }
 
-  shareWithFriends = () => {
-    return {
-      position: "top",
-      allowOutsideClick: false,
-      title: "Share this room ID with your friends",
-      text: this.roomId,
-      width: 275,
-      padding: "0.7em",
-      // Custom CSS to change the size of the modal
-      customClass: {
-        heightAuto: false,
-        title: "title-class",
-        popup: "popup-class",
-        confirmButton: "button-class"
-      }
-    };
-  };
-
   componentDidUpdate() {
-    // Check that the player is connected to a channel
     if (this.lobbyChannel != null) {
       socket.on("joined", data => {
         if (this.state.isPlaying) {
@@ -159,7 +139,7 @@ class Game extends Component {
 
     socket.emit("rooms", { id: this.lobbyChannel, action: "create" });
 
-    Swal.fire(this.shareWithFriends());
+    Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
 
     this.setState({
       isRoomCreator: true,
@@ -170,23 +150,7 @@ class Game extends Component {
   };
 
   onPressJoin = e => {
-    Swal.fire({
-      position: "top",
-      input: "text",
-      allowOutsideClick: false,
-      inputPlaceholder: "Enter the room id",
-      showCancelButton: true,
-      confirmButtonColor: "rgb(208,33,41)",
-      confirmButtonText: "OK",
-      width: 275,
-      padding: "0.7em",
-      customClass: {
-        heightAuto: false,
-        popup: "popup-class",
-        confirmButton: "join-button-class",
-        cancelButton: "join-button-class"
-      }
-    }).then(result => {
+    Swal.fire(alerts.JOIN).then(result => {
       // Check if the user typed a value in the input field
       if (result.value != null) {
         this.joinRoom(result.value);
@@ -201,47 +165,42 @@ class Game extends Component {
     socket.emit("rooms", { id: this.lobbyChannel, action: "join" });
 
     socket.emit("players", this.lobbyChannel);
-    socket.on("players", positions => {
-      if (this.player === null) {
-        this.player = Object.keys(positions).length;
-        this.playerName = "Player " + this.player;
-      }
+    socket.on("players", data => {
+      if (data.positions !== undefined && data.pokemon !== undefined) {
+        if (this.player === null) {
+          this.player = Object.keys(data.positions).length;
+          this.playerName = "Player " + this.player;
+        }
 
-      this.setState({
-        isRoomCreator: false,
-        isDisabled: true, // Disable the 'Create' button
-        turn: 1, // Player X makes the 1st move
-        inLobby: true,
-        isPlaying: true,
-        positions: positions
-      });
+        this.setState({
+          isRoomCreator: false,
+          isDisabled: true, // Disable the 'Create' button
+          turn: 1, // Player X makes the 1st move
+          inLobby: true,
+          isPlaying: true,
+          positions: data.positions,
+          pokemon: data.pokemon
+        });
+      } else {
+        Swal.fire(alerts.NONEXISTENT_ROOM);
+      }
     });
   };
 
   pickPokemon = () => {
-    Swal.fire({
-      title: "Pick a Pokemon!",
-      position: "top",
-      input: "select",
-      inputOptions: {
-        "1": "Bulbasaur",
-        "2": "Squirtle",
-        "3": "Charmander"
-      },
-      allowOutsideClick: false,
-      inputPlaceholder: "",
-      showCancelButton: true,
-      confirmButtonColor: "rgb(208,33,41)",
-      confirmButtonText: "OK",
-      width: 275,
-      padding: "0.7em",
-      customClass: {
-        heightAuto: false,
-        popup: "popup-class",
-        confirmButton: "join-button-class",
-        cancelButton: "join-button-class"
-      }
-    }).then(result => {
+    let pokeOptions = {
+      "1": "Bulbasaur",
+      "2": "Squirtle",
+      "3": "Charmander"
+    };
+    if ([2, 5, 8].includes(this.player)) {
+      delete pokeOptions[this.state.pokemon[this.player - 1]];
+    }
+    if ([3, 6, 9].includes(this.player)) {
+      delete pokeOptions[this.state.pokemon[this.player - 1]];
+      delete pokeOptions[this.state.pokemon[this.player - 2]];
+    }
+    Swal.fire(alerts.PICK_POKEMON(pokeOptions)).then(result => {
       if (result.value !== "") {
         socket.emit("pokemon", {
           room: this.lobbyChannel,
@@ -272,7 +231,6 @@ class Game extends Component {
 
   rollBattleDieOne = () => {
     let rolled = Math.floor(Math.random() * 6 + 1);
-    console.log("One");
     socket.emit("battleRolledOne", {
       room: this.lobbyChannel,
       battleRollOne: rolled
@@ -284,7 +242,6 @@ class Game extends Component {
   };
 
   rollBattleDieTwo = () => {
-    console.log("Two");
     let rolled = Math.floor(Math.random() * 6 + 1);
     socket.emit("battleRolledTwo", {
       room: this.lobbyChannel,
@@ -334,15 +291,7 @@ class Game extends Component {
   gameOver = () => {
     Object.entries(this.state.positions).map(([key, value]) => {
       if (value === 72) {
-        Swal.fire({
-          title: "Player " + key + " Wins!",
-          width: 275,
-          position: "center",
-          allowOutsideClick: false,
-          padding: "0.7em",
-          backdrop: "rgba(0,0,123,0.4)",
-          confirmButtonText: "New Game?"
-        }).then(result => {
+        Swal.fire(alerts.PLAYER_WINS(key)).then(result => {
           socket.emit("reset", {
             room: this.lobbyChannel
           });
@@ -388,55 +337,40 @@ class Game extends Component {
       player: player
     });
     if (this.evicted === Object.keys(this.state.positions).length - 1) {
-      swalWithBootstrapButtons
-        .fire({
-          title: "Not Enough Players",
-          text: "Delete game or invite more friends?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Invite More",
-          cancelButtonText: "Delete Game",
-          reverseButtons: true
-        })
-        .then(result => {
-          if (result.value) {
-            swalWithBootstrapButtons.fire(this.shareWithFriends());
-            socket.emit("lonePlayer", this.lobbyChannel);
-            this.evicted = 0;
-            this.setState({
-              positions: { 1: 1 },
-              pokemon: { 1: null },
-              turn: 1
-            });
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire({
-              title: "Deleted",
-              text: "Your room has been deleted",
-              icon: "error",
-              timer: 1500
-            });
-            socket.emit("deleteRoom", this.lobbyChannel);
-            this.multiplier = 1;
-            this.lobbyChannel = null;
-            this.gameChannel = null;
-            this.roomId = null;
-            this.player = null;
-            this.playerName = null;
-            this.specialTileAction = true;
-            this.evicted = 0;
-            this.setState({
-              isPlaying: false,
-              isRoomCreator: false,
-              isDisabled: false,
-              turn: 1,
-              inLobby: false,
-              positions: {},
-              roll: 0,
-              pokemon: {},
-              battling: []
-            });
-          }
-        });
+      swalWithBootstrapButtons.fire(alerts.NOT_ENOUGH_PLAYERS).then(result => {
+        if (result.value) {
+          swalWithBootstrapButtons.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
+          socket.emit("lonePlayer", this.lobbyChannel);
+          this.evicted = 0;
+          this.setState({
+            positions: { 1: 1 },
+            pokemon: { 1: null },
+            turn: 1
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(alerts.DELETED);
+          socket.emit("deleteRoom", this.lobbyChannel);
+          this.multiplier = 1;
+          this.lobbyChannel = null;
+          this.gameChannel = null;
+          this.roomId = null;
+          this.player = null;
+          this.playerName = null;
+          this.specialTileAction = true;
+          this.evicted = 0;
+          this.setState({
+            isPlaying: false,
+            isRoomCreator: false,
+            isDisabled: false,
+            turn: 1,
+            inLobby: false,
+            positions: {},
+            roll: 0,
+            pokemon: {},
+            battling: []
+          });
+        }
+      });
     }
   };
 

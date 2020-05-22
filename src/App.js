@@ -1,12 +1,15 @@
 import React, { Component } from "react";
-import "./App.css";
+import "./Styles/App.css";
 import Game from "./Game";
+import ErrorBoundary from "./Components/ErrorBoundary";
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Game />
+        <ErrorBoundary>
+          <Game />
+        </ErrorBoundary>
       </div>
     );
   }

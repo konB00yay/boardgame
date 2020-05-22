@@ -11,7 +11,7 @@ class Intro extends Component {
     return (
       <div className="index">
         <div className="intro">
-          <img src={require("./spaces/introBoard.png")} alt="" />
+          <img src={require("../spaces/introBoard.png")} alt="" />
         </div>
         <div className="button-container">
           <button

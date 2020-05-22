@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./Battle.css";
+import "../Styles/Battle.css";
 
 class Battle extends Component {
   constructor(props) {
@@ -13,13 +13,13 @@ class Battle extends Component {
   renderPokemon = player => {
     let pokemon = parseInt(this.props.pokemon[player]);
     if (pokemon === 1) {
-      return require("./bulbasaur.png");
+      return require("../Images/bulbasaur.png");
     } else if (pokemon === 2) {
-      return require("./squirtle.png");
+      return require("../Images/squirtle.png");
     } else if (pokemon === 3) {
-      return require("./charmander.png");
+      return require("../Images/charmander.png");
     } else if (pokemon === 4) {
-      return require("./pikachu.png");
+      return require("../Images/pikachu.png");
     }
   };
 
