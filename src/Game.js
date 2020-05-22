@@ -454,7 +454,7 @@ class Game extends Component {
         {this.state.isPlaying && (
           <div className="game">
             <PokeNav
-              roomCreater={this.state.isRoomCreator}
+              roomCreator={this.state.isRoomCreator}
               playerName={this.playerName}
               evictPlayer={this.evictPlayer}
               playerOptions={this.playerOptions}
