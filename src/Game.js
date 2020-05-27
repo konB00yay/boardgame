@@ -442,6 +442,13 @@ class Game extends Component {
   };
 
   render() {
+    let pokeChoice = false;
+    if (this.player === 1) {
+      pokeChoice = true;
+    }
+    if (this.player > 1) {
+      pokeChoice = this.state.pokemon[this.player - 1] !== null;
+    }
     return (
       <div>
         {!this.state.isPlaying && (
@@ -506,15 +513,16 @@ class Game extends Component {
                   />
                 )}
             </div>
-            {this.state.pokemon[this.player] === null && (
-              <button
-                className="pick-pokemon"
-                onClick={e => this.pickPokemon()}
-              >
-                {" "}
-                Pick a Pokemon
-              </button>
-            )}
+            {this.state.pokemon[this.player] === null &&
+              pokeChoice && (
+                <button
+                  className="pick-pokemon"
+                  onClick={e => this.pickPokemon()}
+                >
+                  {" "}
+                  Pick a Pokemon
+                </button>
+              )}
             {this.gameOver()}
           </div>
         )}
