@@ -479,6 +479,7 @@ class Game extends Component {
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
                 <div className="haunter">
+                  <img src={require("./Images/haunter.png")} alt="haunter" />
                   <select
                     className="dropdown"
                     onChange={e => {

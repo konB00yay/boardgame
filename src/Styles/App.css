@@ -23,7 +23,6 @@
 .create-button {
   margin-right: 5%;
   background-color: #fccf00;
-  border: none;
   color: #2468b1;
   padding: 15px 32px;
   text-align: center;
@@ -31,6 +30,18 @@
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
+  box-shadow: 3px 4px 0px 0px #899599;
+  background: linear-gradient(to bottom, #ededed 5%, #fccf00 100%);
+  border-radius: 15px;
+  border: 1px solid #d6bcd6;
+  font-family: Arial;
+  text-shadow: 0px 1px 0px #e1e2ed;
+}
+
+.create-button:hover,
+.join-button:hover {
+  background: linear-gradient(to bottom, #fccf00 5%, #ededed 100%);
+  background-color: #bab1ba;
 }
 
 .join-button {
@@ -44,6 +55,12 @@
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
+  box-shadow: 3px 4px 0px 0px #899599;
+  background: linear-gradient(to bottom, #ededed 5%, #fccf00 100%);
+  border-radius: 15px;
+  border: 1px solid #d6bcd6;
+  font-family: Arial;
+  text-shadow: 0px 1px 0px #e1e2ed;
 }
 
 @media screen and (max-width: 800px) {

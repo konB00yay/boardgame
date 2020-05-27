@@ -59,31 +59,36 @@
 
 .next-player-button {
   width: 125px;
-  background-color: #fccf00;
-  border: none;
   color: #2468b1;
   padding: 8px 20px;
   text-align: center;
-  text-decoration: none;
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
   margin-right: 5px;
+  box-shadow: 3px 4px 0px 0px #899599;
+  background: linear-gradient(to bottom, #ededed 5%, #fccf00 100%);
+  border-radius: 15px;
+  border: 1px solid #d6bcd6;
+  font-family: Arial;
+  text-shadow: 0px 1px 0px #e1e2ed;
 }
 
 .reset-button {
-  width: 170px;
+  width: 180px;
   position: absolute;
   left: 378px;
-  background-color: #fccf00;
-  border: none;
-  color: #2468b1;
   padding: 8px 15px;
   text-align: center;
-  text-decoration: none;
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
+  box-shadow: 3px 4px 0px 0px #899599;
+  background: linear-gradient(to bottom, #ededed 5%, #fccf00 100%);
+  border-radius: 15px;
+  border: 1px solid #d6bcd6;
+  font-family: Arial;
+  text-shadow: 0px 1px 0px #e1e2ed;
 }
 
 .dice-roll {
@@ -189,10 +194,16 @@
 }
 
 .haunter {
-  position: relative;
+  position: absolute;
   float: left;
-  margin-left: 10%;
-  margin-top: 30%;
+  margin-left: 5%;
+  margin-top: 20%;
+}
+
+.haunter img {
+  height: 300px;
+  width: 300px;
+  position: relative;
 }
 
 .dropdown {
@@ -202,7 +213,7 @@
   height: 33px;
   line-height: 40px;
   text-decoration: none;
-  width: 100px;
+  width: 180px;
   text-align: center;
 }
 
@@ -225,6 +236,5 @@
 
 .gameBoard {
   position: relative;
-  display: grid;
   margin-top: 40px;
 }
