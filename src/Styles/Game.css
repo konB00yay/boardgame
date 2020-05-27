@@ -15,25 +15,7 @@
   z-index: -1;
 }
 
-.roll-button {
-  width: 40px;
-  position: absolute;
-  left: 30px;
-  background-color: white;
-  border: none;
-  color: black;
-  padding: 5px 5px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 100%;
-  margin-top: -33px;
-  border: 3px solid black;
-  z-index: 99999;
-}
-
+.roll-button,
 .go-button {
   width: 40px;
   position: absolute;
@@ -57,9 +39,10 @@
   display: contents;
 }
 
-.next-player-button {
-  width: 125px;
-  color: #2468b1;
+.next-player-button,
+.reset-button,
+.pick-pokemon {
+  width: fit-content;
   padding: 8px 20px;
   text-align: center;
   display: inline-block;
@@ -74,21 +57,8 @@
   text-shadow: 0px 1px 0px #e1e2ed;
 }
 
-.reset-button {
-  width: 180px;
-  position: absolute;
-  left: 378px;
-  padding: 8px 15px;
-  text-align: center;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 3px 4px 0px 0px #899599;
-  background: linear-gradient(to bottom, #ededed 5%, #fccf00 100%);
-  border-radius: 15px;
-  border: 1px solid #d6bcd6;
-  font-family: Arial;
-  text-shadow: 0px 1px 0px #e1e2ed;
+#pokemonPicker {
+  margin-bottom: 10px;
 }
 
 .dice-roll {
@@ -114,7 +84,7 @@
   z-index: -1;
 }
 
-#rollPokeballTop {
+#pokeTop {
   width: 100px;
   height: 50px;
   background-color: red;
@@ -124,7 +94,7 @@
   box-sizing: border-box;
 }
 
-#rollPokeballBottom {
+#pokeBottom {
   width: 100px;
   height: 50px;
   background-color: white;
@@ -142,27 +112,6 @@
   z-index: -1;
   width: 100px;
   height: 100px;
-}
-
-#goPokeballTop {
-  width: 100px;
-  height: 50px;
-  background-color: red;
-  border-top-left-radius: 100px;
-  border-top-right-radius: 100px;
-  border: 3px solid black;
-  box-sizing: border-box;
-}
-
-#goPokeballBottom {
-  width: 100px;
-  height: 50px;
-  background-color: white;
-  border-bottom-left-radius: 100px;
-  border-bottom-right-radius: 100px;
-  border: 3px solid black;
-  box-sizing: border-box;
-  margin-top: -16px;
 }
 
 .pokeball {
@@ -217,17 +166,11 @@
   text-align: center;
 }
 
-.pick-pokemon {
-  margin-bottom: 10px;
-  background-color: #fccf00;
-  border: none;
-  color: #2468b1;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
+.next-player-button:hover,
+.pick-pokemon:hover,
+.reset-button:hover {
+  background: linear-gradient(to bottom, #fccf00 5%, #ededed 100%);
+  background-color: #bab1ba;
 }
 
 .board-battle {
@@ -236,5 +179,9 @@
 
 .gameBoard {
   position: relative;
-  margin-top: 40px;
+  margin-top: 80px;
+}
+
+.pokenav {
+  height: 60px;
 }

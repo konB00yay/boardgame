@@ -17,7 +17,7 @@ class PokeNav extends Component {
 
   render() {
     return (
-      <Navbar sticky="top" bg="light">
+      <Navbar sticky="top" bg="light" className="pokenav">
         <Navbar.Brand className="player-name">
           {this.props.playerName}
         </Navbar.Brand>
@@ -41,12 +41,12 @@ class PokeNav extends Component {
           <Nav className="roll">
             {this.props.player === this.props.turn && (
               <div className="pokeball" id="rollPokeball">
-                <figure className="pokeballTop" id="rollPokeballTop" />
+                <figure className="pokeballTop" id="pokeTop" />
                 <button className="roll-button" onClick={e => this.rollDice()}>
                   {" "}
                   Roll
                 </button>
-                <figure className="pokeballBottom" id="rollPokeballBottom" />
+                <figure className="pokeballBottom" id="pokeBottom" />
               </div>
             )}
             <div className="pokeball">
@@ -58,26 +58,14 @@ class PokeNav extends Component {
               <div>
                 {this.props.diceRoll > 0 && (
                   <div className="pokeball" id="goPokeball">
-                    <figure className="pokeballTop" id="goPokeballTop" />
+                    <figure className="pokeballTop" id="pokeTop" />
                     <button className="go-button" onClick={e => this.go()}>
                       {" "}
                       Go!
                     </button>
-                    <figure className="pokeballBottom" id="goPokeballBottom" />
+                    <figure className="pokeballBottom" id="pokeBottom" />
                   </div>
                 )}
-                {tileAction.missingnoReset(
-                  this.props.positions[this.props.player]
-                ) &&
-                  this.props.specialTile && (
-                    <button
-                      className="reset-button"
-                      onClick={e => this.resetPlayer()}
-                    >
-                      {" "}
-                      Glitch to Pallet Town
-                    </button>
-                  )}
               </div>
             )}
           </Nav>
@@ -85,6 +73,18 @@ class PokeNav extends Component {
         <Nav id="playersTurns" pullright="true">
           {this.props.player === this.props.turn && (
             <Nav pullright="true">
+              {tileAction.missingnoReset(
+                this.props.positions[this.props.player]
+              ) &&
+                this.props.specialTile && (
+                  <button
+                    className="reset-button"
+                    onClick={e => this.resetPlayer()}
+                  >
+                    {" "}
+                    Glitch to Pallet Town
+                  </button>
+                )}
               <button
                 className="next-player-button"
                 onClick={e => this.nextPlayer()}

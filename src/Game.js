@@ -150,12 +150,14 @@ class Game extends Component {
   };
 
   onPressJoin = e => {
-    Swal.fire(alerts.JOIN).then(result => {
-      // Check if the user typed a value in the input field
-      if (result.value != null) {
-        this.joinRoom(result.value);
-      }
-    });
+    if (!this.state.isRoomCreator) {
+      Swal.fire(alerts.JOIN).then(result => {
+        // Check if the user typed a value in the input field
+        if (result.value != null) {
+          this.joinRoom(result.value);
+        }
+      });
+    }
   };
 
   joinRoom = value => {
@@ -518,6 +520,7 @@ class Game extends Component {
               pokeChoice && (
                 <button
                   className="pick-pokemon"
+                  id="pokemonPicker"
                   onClick={e => this.pickPokemon()}
                 >
                   {" "}
