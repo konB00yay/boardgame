@@ -38,12 +38,6 @@
   text-shadow: 0px 1px 0px #e1e2ed;
 }
 
-.create-button:hover,
-.join-button:hover {
-  background: linear-gradient(to bottom, #fccf00 5%, #ededed 100%);
-  background-color: #bab1ba;
-}
-
 .join-button {
   margin-left: 5%;
   background-color: #fccf00; /* Green */
@@ -61,6 +55,67 @@
   border: 1px solid #d6bcd6;
   font-family: Arial;
   text-shadow: 0px 1px 0px #e1e2ed;
+}
+
+.create-div .create-instructions,
+.join-div .join-instructions {
+  font-size: 14px;
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.create-div {
+  margin-right: 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.join-div {
+  margin-left: 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.create-div .create-instructions::after,
+.join-div .join-instructions::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.create-div:hover .create-instructions,
+.join-div:hover .join-instructions {
+  visibility: visible;
+  opacity: 1;
+  z-index: 999999;
+}
+
+.create-button:hover,
+.join-button:hover {
+  background: linear-gradient(to bottom, #fccf00 5%, #ededed 100%);
+  background-color: #bab1ba;
 }
 
 @media screen and (max-width: 800px) {

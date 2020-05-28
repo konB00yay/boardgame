@@ -14,18 +14,29 @@ class Intro extends Component {
           <img src={require("../spaces/introBoard.png")} alt="" />
         </div>
         <div className="button-container">
-          <button
-            className="create-button"
-            disabled={this.props.isDisabled}
-            onClick={e => this.create()}
-          >
-            {" "}
-            Create
-          </button>
-          <button className="join-button" onClick={e => this.join(e)}>
-            {" "}
-            Join
-          </button>
+          <div className="create-div">
+            <button
+              className="create-button"
+              disabled={this.props.isDisabled}
+              onClick={e => this.create()}
+            >
+              {" "}
+              Create
+            </button>
+            <span className="create-instructions">
+              Create a game and give the code to your friends. The game will
+              load when Player 2 joins!
+            </span>
+          </div>
+          <div className="join-div">
+            <button className="join-button" onClick={e => this.join(e)}>
+              {" "}
+              Join
+            </button>
+            <span className="join-instructions">
+              Join the game being played via the room code from your friends.
+            </span>
+          </div>
         </div>
       </div>
     );

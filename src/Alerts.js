@@ -55,6 +55,10 @@ export const SHARE_WITH_FRIENDS = room => {
     allowOutsideClick: false,
     title: "Share this room ID with your friends",
     text: room,
+    footer: "Waiting for Player 2 to join...",
+    showConfirmButton: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
     width: 275,
     padding: "0.7em",
     customClass: {
