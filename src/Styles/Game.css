@@ -164,6 +164,8 @@
   text-decoration: none;
   width: 180px;
   text-align: center;
+  z-index: 9999;
+  cursor: pointer;
 }
 
 .next-player-button:hover,
