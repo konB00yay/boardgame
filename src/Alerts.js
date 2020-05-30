@@ -42,6 +42,17 @@ export const NOT_ENOUGH_PLAYERS = {
   reverseButtons: true
 };
 
+export const PIKACHU = {
+  title: "Choose Pikachu?",
+  text: "Replace current starter with Pikachu",
+  showCancelButton: "false",
+  confirmButtonText: "Pika Pika",
+  cancelButtonText: "Nah Fam",
+  allowEscapeKey: false,
+  allowEnterKey: false,
+  allowOutsideClick: false
+};
+
 export const DELETED = {
   title: "Deleted",
   text: "Your room has been deleted",

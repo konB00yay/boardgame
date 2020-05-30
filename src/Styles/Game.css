@@ -180,8 +180,13 @@
 .gameBoard {
   position: relative;
   margin-top: 80px;
+  height: 820px;
 }
 
 .pokenav {
   height: 60px;
+}
+
+.mb-3 {
+  margin-top: 6%;
 }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, InputGroup, FormControl, Button } from "react-bootstrap";
 import * as tileAction from "../SpecialTiles";
 
 class PokeNav extends Component {
@@ -13,13 +13,36 @@ class PokeNav extends Component {
     this.resetPlayer = this.props.reset.bind(this);
     this.nextPlayer = this.props.next.bind(this);
     this.whoseTurn = this.props.whoseTurn.bind(this);
+    this.newName = this.props.name.bind(this);
+
+    this.playerName = React.createRef();
   }
 
   render() {
     return (
       <Navbar sticky="top" bg="light" className="pokenav">
         <Navbar.Brand className="player-name">
-          {this.props.playerName}
+          {this.props.names[this.props.player] === null && (
+            <InputGroup className="mb-3">
+              <FormControl
+                placeholder={this.props.playerName}
+                aria-label="Recipient's username"
+                aria-describedby="basic-addon2"
+                ref={this.playerName}
+              />
+              <InputGroup.Append>
+                <Button
+                  onClick={e => this.newName(this.playerName.current.value)}
+                  variant="outline-secondary"
+                >
+                  Submit
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
+          )}
+          {this.props.names[this.props.player] !== null && (
+            <div>{this.props.playerName}</div>
+          )}
         </Navbar.Brand>
         <Navbar.Collapse className="navCollapse">
           <Nav className="spacing">

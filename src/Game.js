@@ -40,7 +40,8 @@ class Game extends Component {
       pokemon: {},
       battling: [],
       battleRollOne: 0,
-      battleRollTwo: 0
+      battleRollTwo: 0,
+      playerNames: {}
     };
 
     this.multiplier = 1;
@@ -60,13 +61,15 @@ class Game extends Component {
         if (this.state.isPlaying) {
           this.setState({
             positions: data.positions,
-            pokemon: data.pokemon
+            pokemon: data.pokemon,
+            playerNames: data.names
           });
         } else {
           this.setState({
             isPlaying: true,
             positions: data.positions,
-            pokemon: data.pokemon
+            pokemon: data.pokemon,
+            playerNames: data.names
           });
         }
         Swal.close();
@@ -129,6 +132,11 @@ class Game extends Component {
         battling: data.battling
       });
     });
+    socket.on("names", data => {
+      this.setState({
+        playerNames: data.names
+      });
+    });
   }
 
   onPressCreate = e => {
@@ -141,12 +149,16 @@ class Game extends Component {
 
     Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
 
-    this.setState({
+    this.setState(prevState => ({
+      playerNames: {
+        ...prevState.playerNames,
+        [this.player]: null
+      },
       isRoomCreator: true,
       isDisabled: true, // Disable the 'Create' button
       turn: 1, // Player X makes the 1st move
       inLobby: true
-    });
+    }));
   };
 
   onPressJoin = e => {
@@ -181,7 +193,8 @@ class Game extends Component {
           inLobby: true,
           isPlaying: true,
           positions: data.positions,
-          pokemon: data.pokemon
+          pokemon: data.pokemon,
+          playerNames: data.names
         });
       } else {
         Swal.fire(alerts.NONEXISTENT_ROOM);
@@ -326,6 +339,22 @@ class Game extends Component {
     return players;
   };
 
+  newName = name => {
+    this.playerName = name;
+    socket.emit("newName", {
+      room: this.lobbyChannel,
+      player: this.player,
+      newName: name
+    });
+
+    this.setState(prevState => ({
+      playerNames: {
+        ...prevState.playerNames,
+        [this.player]: name
+      }
+    }));
+  };
+
   onHaunterSelected = player => {
     this.specialTileAction = false;
     let newPosition = this.state.positions[player] - 10;
@@ -377,54 +406,91 @@ class Game extends Component {
   };
 
   spaceMutation = (newPosition, player) => {
+    let playersBattling = [];
     newPosition = tileAction.onAbra(newPosition);
     this.multiplier = tileAction.bike(newPosition);
 
     let pokemonSwitch = this.state.pokemon[player];
     if (tileAction.pikachu(newPosition)) {
-      pokemonSwitch = 4;
-      socket.emit("pokemon", {
-        room: this.lobbyChannel,
-        player: player,
-        pokemon: pokemonSwitch
-      });
-    }
+      Swal.fire(alerts.PIKACHU).then(result => {
+        if (result.value) {
+          pokemonSwitch = 4;
+        }
+        socket.emit("pokemon", {
+          room: this.lobbyChannel,
+          player: player,
+          pokemon: pokemonSwitch
+        });
+        if (!this.gym) {
+          playersBattling.push(this.player);
+          for (const player in Object.keys(this.state.positions)) {
+            if (parseInt(player) !== this.player) {
+              if (this.state.positions[player] === newPosition) {
+                playersBattling.push(parseInt(player));
+              }
+            }
+          }
+        }
 
-    let playersBattling = [];
-    if (!this.gym) {
-      playersBattling.push(this.player);
-      for (const player in Object.keys(this.state.positions)) {
-        if (parseInt(player) !== this.player) {
-          if (this.state.positions[player] === newPosition) {
-            playersBattling.push(parseInt(player));
+        socket.emit("move", {
+          room: this.lobbyChannel,
+          player: player,
+          newSpace: newPosition,
+          battling: playersBattling
+        });
+
+        this.setState(prevState => ({
+          positions: {
+            ...prevState.positions,
+            [player]: newPosition
+          },
+          pokemon: {
+            ...prevState.pokemon,
+            [player]: pokemonSwitch
+          },
+          battling: playersBattling
+        }));
+      });
+    } else {
+      if (!this.gym) {
+        playersBattling.push(this.player);
+        for (const player in Object.keys(this.state.positions)) {
+          if (parseInt(player) !== this.player) {
+            if (this.state.positions[player] === newPosition) {
+              playersBattling.push(parseInt(player));
+            }
           }
         }
       }
+
+      socket.emit("move", {
+        room: this.lobbyChannel,
+        player: player,
+        newSpace: newPosition,
+        battling: playersBattling
+      });
+
+      this.setState(prevState => ({
+        positions: {
+          ...prevState.positions,
+          [player]: newPosition
+        },
+        pokemon: {
+          ...prevState.pokemon,
+          [player]: pokemonSwitch
+        },
+        battling: playersBattling
+      }));
     }
-
-    socket.emit("move", {
-      room: this.lobbyChannel,
-      player: player,
-      newSpace: newPosition,
-      battling: playersBattling
-    });
-
-    this.setState(prevState => ({
-      positions: {
-        ...prevState.positions,
-        [player]: newPosition
-      },
-      pokemon: {
-        ...prevState.pokemon,
-        [player]: pokemonSwitch
-      },
-      battling: playersBattling
-    }));
   };
 
   whoseTurn = () => {
     if (this.state.turn !== this.player) {
-      return "Player " + this.state.turn + "s turn";
+      if (this.state.playerNames[this.state.turn] !== null) {
+        return this.state.playerNames[this.state.turn] + "s turn";
+      } else {
+        return "Player " + this.state.turn + "s turn";
+      }
     } else {
       return "Your turn";
     }
@@ -477,6 +543,8 @@ class Game extends Component {
               reset={this.resetPlayer}
               next={this.nextPlayer}
               whoseTurn={this.whoseTurn}
+              name={this.newName}
+              names={this.state.playerNames}
             />
             {tileAction.haunter(this.state.positions[this.player]) &&
               this.specialTileAction && (
@@ -500,6 +568,7 @@ class Game extends Component {
                 positions={this.state.positions}
                 pokemon={this.state.pokemon}
                 player={this.player}
+                names={this.state.playerNames}
               />
               {this.state.battling !== undefined &&
                 this.state.battling.length > 1 && (
