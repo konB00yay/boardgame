@@ -28,6 +28,7 @@ class PokeNav extends Component {
                 placeholder={this.props.playerName}
                 aria-label="Recipient's username"
                 aria-describedby="basic-addon2"
+                id="playerNameInput"
                 ref={this.playerName}
               />
               <InputGroup.Append>
@@ -41,7 +42,7 @@ class PokeNav extends Component {
             </InputGroup>
           )}
           {this.props.names[this.props.player] !== null && (
-            <div>{this.props.playerName}</div>
+            <div className="name">{this.props.playerName}</div>
           )}
         </Navbar.Brand>
         <Navbar.Collapse className="navCollapse">

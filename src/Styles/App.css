@@ -14,6 +14,7 @@
   background-color: black;
   text-align: center;
   position: fixed;
+  overflow: auto;
 }
 
 .intro {
@@ -79,6 +80,8 @@
 .button-container {
   position: relative;
   display: inline-block;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .create-div {
@@ -154,5 +157,16 @@
   }
   100% {
     transform: translateY(0px);
+  }
+}
+
+@media screen and (min-width: 1680px) {
+  .create-button,
+  .join-button {
+    font-size: 25px;
+  }
+  .create-div .create-instructions,
+  .join-div .join-instructions {
+    font-size: 18px;
   }
 }

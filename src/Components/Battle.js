@@ -35,7 +35,11 @@ class Battle extends Component {
     return (
       <div className="battle-scene">
         <div className="battling-player">
-          <div className="playerName">Player {this.props.players[0]}</div>
+          <div className="playerName">
+            {this.props.names[this.props.players[0]] === null
+              ? "Player " + this.props.players[0]
+              : this.props.names[this.props.players[0]]}
+          </div>
           <div className="battle-roll">{this.props.battleRollOne}</div>
           <img
             className="pokemon"
@@ -62,7 +66,11 @@ class Battle extends Component {
           )}
         </div>
         <div className="battling-player">
-          <div className="playerName">Player {this.props.players[1]}</div>
+          <div className="playerName">
+            {this.props.names[this.props.players[1]] === null
+              ? "Player " + this.props.players[1]
+              : this.props.names[this.props.players[1]]}
+          </div>
           <div className="battle-roll">{this.props.battleRollTwo}</div>
           <img
             className="pokemon"

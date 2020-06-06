@@ -41,7 +41,8 @@ class Game extends Component {
       battling: [],
       battleRollOne: 0,
       battleRollTwo: 0,
-      playerNames: {}
+      playerNames: {},
+      caterpie: 0
     };
 
     this.multiplier = 1;
@@ -91,7 +92,8 @@ class Game extends Component {
       } else {
         this.setState({
           positions: data.positions,
-          battling: data.battling
+          battling: data.battling,
+          caterpie: data.caterpie
         });
       }
     });
@@ -189,7 +191,7 @@ class Game extends Component {
         this.setState({
           isRoomCreator: false,
           isDisabled: true, // Disable the 'Create' button
-          turn: 1, // Player X makes the 1st move
+          turn: data.turn,
           inLobby: true,
           isPlaying: true,
           positions: data.positions,
@@ -234,6 +236,9 @@ class Game extends Component {
 
   rollDice = () => {
     let rolled = Math.floor(Math.random() * 6 + 1);
+    if (this.state.caterpie > 0 && this.state.caterpie !== this.player) {
+      rolled = Math.ceil(rolled / 2);
+    }
     socket.emit("rolled", {
       room: this.lobbyChannel,
       roll: rolled
@@ -409,6 +414,13 @@ class Game extends Component {
     let playersBattling = [];
     newPosition = tileAction.onAbra(newPosition);
     this.multiplier = tileAction.bike(newPosition);
+    let caterpie = tileAction.caterpie(newPosition);
+    let caterpiePlayer = this.state.caterpie;
+    if (caterpie) {
+      caterpiePlayer = this.player;
+    } else if (caterpiePlayer === this.player) {
+      caterpiePlayer = 0;
+    }
 
     let pokemonSwitch = this.state.pokemon[player];
     if (tileAction.pikachu(newPosition)) {
@@ -436,7 +448,8 @@ class Game extends Component {
           room: this.lobbyChannel,
           player: player,
           newSpace: newPosition,
-          battling: playersBattling
+          battling: playersBattling,
+          caterpie: caterpiePlayer
         });
 
         this.setState(prevState => ({
@@ -448,7 +461,8 @@ class Game extends Component {
             ...prevState.pokemon,
             [player]: pokemonSwitch
           },
-          battling: playersBattling
+          battling: playersBattling,
+          caterpie: caterpiePlayer
         }));
       });
     } else {
@@ -467,7 +481,8 @@ class Game extends Component {
         room: this.lobbyChannel,
         player: player,
         newSpace: newPosition,
-        battling: playersBattling
+        battling: playersBattling,
+        caterpie: caterpiePlayer
       });
 
       this.setState(prevState => ({
@@ -479,7 +494,8 @@ class Game extends Component {
           ...prevState.pokemon,
           [player]: pokemonSwitch
         },
-        battling: playersBattling
+        battling: playersBattling,
+        caterpie: caterpiePlayer
       }));
     }
   };
@@ -582,20 +598,23 @@ class Game extends Component {
                     player={this.player}
                     pokemon={this.state.pokemon}
                     nextBattle={this.nextBattle}
+                    names={this.state.playerNames}
                   />
                 )}
+              {this.state.pokemon[this.player] === null &&
+                pokeChoice && (
+                  <div className="pokemonPickDiv">
+                    <button
+                      className="pick-pokemon"
+                      id="pokemonPicker"
+                      onClick={e => this.pickPokemon()}
+                    >
+                      {" "}
+                      Pick a Pokemon
+                    </button>
+                  </div>
+                )}
             </div>
-            {this.state.pokemon[this.player] === null &&
-              pokeChoice && (
-                <button
-                  className="pick-pokemon"
-                  id="pokemonPicker"
-                  onClick={e => this.pickPokemon()}
-                >
-                  {" "}
-                  Pick a Pokemon
-                </button>
-              )}
             {this.gameOver()}
           </div>
         )}

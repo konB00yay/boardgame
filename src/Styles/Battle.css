@@ -1,6 +1,6 @@
 .battle-scene {
   height: 500px;
-  width: 500px;
+  width: 40%;
   z-index: 1000;
   color: black;
   position: absolute;
@@ -10,7 +10,7 @@
   box-shadow: 0 0px 175px rgba(136, 154, 168, 1);
   opacity: 0.94;
   display: grid;
-  grid-template-columns: 166.67px 166.67px 166.67px;
+  grid-template-columns: 33.3% 33.3% 33.3%;
 }
 
 .battling-player {
@@ -33,7 +33,7 @@
   height: 80px;
   display: flex;
   margin: inherit;
-  margin-left: 40px;
+  margin-left: 30%;
 }
 
 .playerName {

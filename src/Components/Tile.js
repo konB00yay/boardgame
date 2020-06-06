@@ -32,7 +32,7 @@ class Tile extends Component {
 
   render() {
     return (
-      <div className="tileContainer">
+      <div className="tileContainer" id={this.props.number}>
         <img
           src={this.props.space}
           alt="board space"

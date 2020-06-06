@@ -1,6 +1,7 @@
 const ABRA_ONE = 12;
 const ABRA_TWO = 29;
 const PIKACHU = 5;
+const CATERPIE = 4;
 const MISSINGNO = 58;
 // const LAPRAS = 39;
 // const SS_ANNE = 19;
@@ -27,6 +28,10 @@ export const bike = space => {
     return 2;
   }
   return 1;
+};
+
+export const caterpie = space => {
+  return space === CATERPIE;
 };
 
 export const onAbra = space => {

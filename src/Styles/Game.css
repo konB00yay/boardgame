@@ -182,7 +182,7 @@
 .gameBoard {
   position: relative;
   margin-top: 80px;
-  height: 820px;
+  height: 800px;
 }
 
 .pokenav {
@@ -191,4 +191,102 @@
 
 .mb-3 {
   margin-top: 6%;
+}
+
+.pokemonPickDiv {
+  position: absolute;
+  margin-top: 65%;
+  margin-left: 45%;
+}
+
+@media screen and (min-width: 1680px) {
+  .pokeball {
+    margin-top: -131px;
+    width: 300px;
+    height: 300px;
+  }
+  .pokeballTop,
+  .pokeballBottom {
+    width: 300px;
+    height: 150px;
+  }
+  .pokeballTop {
+    border-top-left-radius: 150px;
+    border-top-right-radius: 150px;
+  }
+  .pokeballBottom {
+    border-bottom-left-radius: 150px;
+    border-bottom-right-radius: 150px;
+  }
+  .dice-roll {
+    height: 75px;
+    width: 75px;
+    left: 52%;
+    margin-top: -53px;
+    font-size: 43px;
+  }
+  .roll-button,
+  .go-button {
+    width: 50px;
+    height: 50px;
+    left: 75px;
+    font-size: 16px;
+    margin-top: -40px;
+  }
+  #pokeTop {
+    width: 200px;
+    height: 100px;
+    background-color: red;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    border: 3px solid black;
+    box-sizing: border-box;
+  }
+  #pokeBottom {
+    width: 200px;
+    height: 100px;
+    background-color: white;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+    border: 3px solid black;
+    box-sizing: border-box;
+    margin-top: -16px;
+  }
+  #goPokeball {
+    margin-top: -73px;
+    margin-left: -70px;
+    z-index: -1;
+    width: 100px;
+    height: 100px;
+  }
+  #rollPokeball {
+    margin-top: -73px;
+    margin-left: -40px;
+    width: 100px;
+    height: 100px;
+  }
+  .pokenav {
+    height: 90px;
+    font-size: 25px;
+  }
+  .mb-3 {
+    height: 50px;
+  }
+  #playerNameInput {
+    height: 50px;
+    font-size: 25px;
+    width: 193px;
+  }
+  .dropdown {
+    height: 50px;
+    font-size: 25px;
+  }
+  .next-player-button,
+  .reset-button,
+  .pick-pokemon {
+    font-size: 25px;
+  }
+  .name {
+    font-size: 25px;
+  }
 }
