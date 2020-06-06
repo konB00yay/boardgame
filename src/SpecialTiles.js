@@ -3,16 +3,19 @@ const ABRA_TWO = 29;
 const PIKACHU = 5;
 const CATERPIE = 4;
 const MISSINGNO = 58;
-// const LAPRAS = 39;
-// const SS_ANNE = 19;
 const BICYCLE = 21;
 const HAUNTER = 28;
-// const RARE_CANDY = 42;
+const EVOLVE = 35;
+const GYMFIVE = 44;
 
 const HARD_STOPS = [7, 14, 20, 33, 44, 53, 59, 64, 69, 70, 71, 72];
 
 export const haunter = space => {
   return space === HAUNTER;
+};
+
+export const evolve = space => {
+  return space === EVOLVE;
 };
 
 export const missingnoReset = space => {
@@ -42,6 +45,10 @@ export const onAbra = space => {
   } else {
     return space;
   }
+};
+
+export const gymFive = data => {
+  return data.oldPosition < GYMFIVE && data.newPosition >= GYMFIVE;
 };
 
 export const stopAtGym = data => {

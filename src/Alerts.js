@@ -53,6 +53,17 @@ export const PIKACHU = {
   allowOutsideClick: false
 };
 
+export const EVOLVE = {
+  title: "Evolve?",
+  text: "Evolve and skip next gym",
+  showCancelButton: "false",
+  confirmButtonText: "Evolve!",
+  cancelButtonText: "lol Everstone",
+  allowEscapeKey: false,
+  allowEnterKey: false,
+  allowOutsideClick: false
+};
+
 export const DELETED = {
   title: "Deleted",
   text: "Your room has been deleted",

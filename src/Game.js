@@ -54,6 +54,7 @@ class Game extends Component {
     this.specialTileAction = true;
     this.evicted = 0;
     this.gym = false;
+    this.evolved = false;
   }
 
   componentDidUpdate() {
@@ -277,13 +278,24 @@ class Game extends Component {
     this.specialTileAction = true;
     let newPosition =
       this.state.positions[this.player] + this.state.roll * this.multiplier;
-    let data = tileAction.stopAtGym({
-      space: newPosition,
-      positions: this.state.positions,
-      thisPlayer: this.player
-    });
-    newPosition = data.newPosition;
-    this.gym = data.gym;
+    if (!this.evolved) {
+      let data = tileAction.stopAtGym({
+        space: newPosition,
+        positions: this.state.positions,
+        thisPlayer: this.player
+      });
+      this.gym = data.gym;
+      newPosition = data.newPosition;
+    }
+    if (
+      this.evolved &&
+      tileAction.gymFive({
+        oldPosition: this.state.positions[this.player],
+        newPosition: newPosition
+      })
+    ) {
+      this.evolved = false;
+    }
     this.spaceMutation(newPosition, this.player);
   };
 
@@ -460,6 +472,39 @@ class Game extends Component {
           pokemon: {
             ...prevState.pokemon,
             [player]: pokemonSwitch
+          },
+          battling: playersBattling,
+          caterpie: caterpiePlayer
+        }));
+      });
+    } else if (tileAction.evolve(newPosition)) {
+      Swal.fire(alerts.EVOLVE).then(result => {
+        if (result.value) {
+          this.evolved = true;
+        }
+        if (!this.gym) {
+          playersBattling.push(this.player);
+          for (const player in Object.keys(this.state.positions)) {
+            if (parseInt(player) !== this.player) {
+              if (this.state.positions[player] === newPosition) {
+                playersBattling.push(parseInt(player));
+              }
+            }
+          }
+        }
+
+        socket.emit("move", {
+          room: this.lobbyChannel,
+          player: player,
+          newSpace: newPosition,
+          battling: playersBattling,
+          caterpie: caterpiePlayer
+        });
+
+        this.setState(prevState => ({
+          positions: {
+            ...prevState.positions,
+            [player]: newPosition
           },
           battling: playersBattling,
           caterpie: caterpiePlayer
