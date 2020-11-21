@@ -4,7 +4,7 @@ const PIKACHU = 5;
 const CATERPIE = 4;
 const MISSINGNO = 58;
 const BICYCLE = 21;
-const HAUNTER = 28;
+const HAUNTER = 26;
 const EVOLVE = 35;
 const GYMFIVE = 44;
 
