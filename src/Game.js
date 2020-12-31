@@ -140,6 +140,43 @@ class Game extends Component {
         playerNames: data.names
       });
     });
+    socket.on("disconnect", (reason) => {
+      this.setState({
+        isPlaying: false
+      })
+      if(this.state.isRoomCreator){
+        Swal.fire(alerts.DISCONNECTED_LEADER).then(result => {
+          this.onCreateAfterDisconnect();
+        });
+      } else{
+        Swal.fire(alerts.DISCONNECTED_PLAYER).then(result =>{
+          if(result != null){
+            this.joinRoomAfterDisconnect(result.value);
+          }
+        })
+      }
+    })
+  }
+
+  onCreateAfterDisconnect = () => {
+    this.roomId = shortid.generate().substring(0, 5);
+    this.lobbyChannel = "pdglobby--" + this.roomId; // Lobby channel name
+    this.player = 1;
+    if(this.state.playerNames[this.player] === null) {
+      this.playerName = "Player " + this.player;
+    }
+    else {
+      this.playerName = this.state.playerNames[this.player]
+    }
+    socket.emit("rooms", { 
+      id: this.lobbyChannel, 
+      action: "createDisconnect",
+      positions: this.state.positions,
+      pokemon: this.state.pokemon,
+      names: this.state.playerNames
+    });
+
+    Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
   }
 
   onPressCreate = e => {
@@ -173,6 +210,36 @@ class Game extends Component {
         }
       });
     }
+  };
+
+  joinRoomAfterDisconnect = value => {
+    this.roomId = value;
+    this.lobbyChannel = "pdglobby--" + this.roomId;
+
+    socket.emit("rooms", { id: this.lobbyChannel, action: "joinDisconnect" });
+
+    socket.emit("players", this.lobbyChannel);
+    socket.on("players", data => {
+      if (data.positions !== undefined && data.pokemon !== undefined) {
+        if (this.player === null) {
+          this.player = Object.keys(data.positions).length;
+          this.playerName = "Player " + this.player;
+        }
+
+        this.setState({
+          isRoomCreator: false,
+          isDisabled: true, // Disable the 'Create' button
+          turn: data.turn,
+          inLobby: true,
+          isPlaying: true,
+          positions: data.positions,
+          pokemon: data.pokemon,
+          playerNames: data.names
+        });
+      } else {
+        Swal.fire(alerts.NONEXISTENT_ROOM);
+      }
+    });
   };
 
   joinRoom = value => {

@@ -5,7 +5,6 @@ import * as tileAction from "../SpecialTiles";
 class PokeNav extends Component {
   constructor(props) {
     super(props);
-
     this.evictPlayer = this.props.evictPlayer.bind(this);
     this.playerOptions = this.props.playerOptions.bind(this);
     this.rollDice = this.props.roll.bind(this);

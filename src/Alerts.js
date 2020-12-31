@@ -20,6 +20,34 @@ export const PICK_POKEMON = options => {
   };
 };
 
+export const DISCONNECTED_LEADER = {
+  title: "Disconnected from timeout!",
+  width: 275,
+  position: "center",
+  allowOutsideClick: false,
+  padding: "0.7em",
+  confirmButtonText: "Make new room? (Same spaces)"
+}
+
+export const DISCONNECTED_PLAYER = {
+  position: "top",
+  input: "text",
+  title: "Someone disconnected, have the leader make a new room",
+  allowOutsideClick: false,
+  inputPlaceholder: "Enter the room id",
+  showCancelButton: true,
+  confirmButtonColor: "rgb(208,33,41)",
+  confirmButtonText: "OK",
+  width: 275,
+  padding: "0.7em",
+  customClass: {
+    heightAuto: false,
+    popup: "popup-class",
+    confirmButton: "join-button-class",
+    cancelButton: "join-button-class"
+  }
+}
+
 export const PLAYER_WINS = player => {
   return {
     title: "Player " + player + " Wins!",
