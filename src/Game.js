@@ -7,7 +7,7 @@ import * as alerts from "./Alerts";
 import "./Styles/Game.css";
 import Swal from "sweetalert2";
 import shortid from "shortid";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -17,6 +17,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const socket = io(socket_url);
+
+socket.connect();
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {

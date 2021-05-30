@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import introPic from "../spaces/introBoard.png";
 
 class Intro extends Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class Intro extends Component {
     return (
       <div className="index">
         <div className="intro">
-          <img src={require("../spaces/introBoard.png")} alt="" />
+          <img src={introPic} alt="" />
         </div>
         <div className="button-container">
           <div className="create-div">
