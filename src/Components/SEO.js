@@ -1,5 +1,5 @@
 import Helmet from "react-helmet";
-const Seo = (props) => (      
+const Seo = () => (      
 <Helmet>
     <title>Pokemon Drinking Game</title>
     <meta name="description" content="The Pokemon Drinking Board Game, play with your friends across the world with game rooms and have fun! Please drink responsibly." />
