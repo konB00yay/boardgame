@@ -31,7 +31,6 @@ class Tile extends Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <div className="tileContainer" id={this.props.number}>
         <img
