@@ -10,6 +10,7 @@ const Seo = () => (
     <meta property="og:url" content="http://www.pkmndrinkinggame.com" />  
     <meta name="twitter:card" content="summary" /> 
     <meta name="twitter:title" content="Pokemon Drinking Game" />
+    <meta name="twitter:card" content="summary"
     <meta name="twitter:description" content="The Pokemon Drinking Board Game, play with your friends across the world with game rooms and have fun! Please drink responsibly." />
     <meta name="twitter:site" content="http://www.pkmndrinkinggame.com" />
     <meta name="twitter:creator" content="Konnor Beaulier" />
