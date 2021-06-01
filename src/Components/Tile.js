@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import "../Styles/Tile.css";
+import {LazyLoadImage} from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const playerColor = {
   1: "#039003",
@@ -33,9 +35,10 @@ class Tile extends Component {
   render() {
     return (
       <div className="tileContainer" id={this.props.number}>
-        <img
+        <LazyLoadImage
           src={this.props.space}
           alt="board space"
+          effect="blur"
           className={this.props.class}
         />
         <div className="playerContainer">
