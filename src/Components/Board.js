@@ -1,10 +1,18 @@
 import React, { Component } from "react";
 import Tile from "./Tile";
-import { GAME_BOARD } from "../consts";
+import { GEN_1 } from "../constsGen1";
+import { GEN_2 } from "../constsGen2";
 import "../Styles/Board.css";
 
 class Board extends Component {
   render() {
+    let GAME_BOARD = [];
+    if(this.props.gen === 1){
+      GAME_BOARD = GEN_1;
+    }
+    else if(this.props.gen === 2){
+      GAME_BOARD = GEN_2;
+    }
     return (
       <div id="row">
         <div id="column">

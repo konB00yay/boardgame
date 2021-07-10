@@ -1,5 +1,12 @@
 import React, { Component } from "react";
 import "../Styles/Battle.css";
+import  bulbasaur from "../Images/bulbasaur.png";
+import  squirtle from "../Images/squirtle.png";
+import  charmander from "../Images/charmander.png";
+import  chikarita from "../Images/chikarita.png";
+import  totodile from "../Images/totodile.png";
+import  cyndaquil from "../Images/cyndaquil.png";
+import pikachu from "../Images/pikachu.png";
 
 class Battle extends Component {
   constructor(props) {
@@ -13,13 +20,22 @@ class Battle extends Component {
   renderPokemon = player => {
     let pokemon = parseInt(this.props.pokemon[player]);
     if (pokemon === 1) {
-      return require("../Images/bulbasaur.png");
+      if(this.props.gen === 2){
+        return chikarita;
+      }
+      return bulbasaur;
     } else if (pokemon === 2) {
-      return require("../Images/squirtle.png");
+      if(this.props.gen === 2){
+        return totodile;
+      }
+      return squirtle;
     } else if (pokemon === 3) {
-      return require("../Images/charmander.png");
+      if(this.props.gen === 2){
+        return cyndaquil;
+      }
+      return charmander;
     } else if (pokemon === 4) {
-      return require("../Images/pikachu.png");
+      return pikachu;
     }
   };
 

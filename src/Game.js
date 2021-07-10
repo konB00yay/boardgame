@@ -32,6 +32,7 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      gen: 1,
       isPlaying: false,
       isRoomCreator: false,
       isDisabled: false,
@@ -44,7 +45,8 @@ class Game extends Component {
       battleRollOne: 0,
       battleRollTwo: 0,
       playerNames: {},
-      caterpie: 0
+      caterpie: 0,
+      reversedOrder: false
     };
 
     this.multiplier = 1;
@@ -57,6 +59,8 @@ class Game extends Component {
     this.evicted = 0;
     this.gym = false;
     this.evolved = false;
+    this.slowpoke = false;
+    this.backwardsRolls = 0;
   }
 
   componentDidUpdate() {
@@ -96,7 +100,8 @@ class Game extends Component {
         this.setState({
           positions: data.positions,
           battling: data.battling,
-          caterpie: data.caterpie
+          caterpie: data.caterpie,
+          reversedOrder: data.reversed
         });
       }
     });
@@ -187,7 +192,7 @@ class Game extends Component {
     this.player = 1;
     this.playerName = "Player " + this.player;
 
-    socket.emit("rooms", { id: this.lobbyChannel, action: "create" });
+    socket.emit("rooms", { id: this.lobbyChannel, gen: this.state.gen, action: "create" });
 
     Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
 
@@ -266,7 +271,8 @@ class Game extends Component {
           isPlaying: true,
           positions: data.positions,
           pokemon: data.pokemon,
-          playerNames: data.names
+          playerNames: data.names,
+          gen: data.gen
         });
       } else {
         Swal.fire(alerts.NONEXISTENT_ROOM);
@@ -274,12 +280,24 @@ class Game extends Component {
     });
   };
 
-  pickPokemon = () => {
+  pokemonOptions = () => {
     let pokeOptions = {
       "1": "Bulbasaur",
       "2": "Squirtle",
       "3": "Charmander"
     };
+    if(this.state.gen === 2) {
+      pokeOptions = {
+        "1": "Chikarita",
+        "2": "Totodile",
+        "3": "Cyndaquil"
+      };
+    }
+    return pokeOptions;
+  }
+
+  pickPokemon = () => {
+    let pokeOptions = this.pokemonOptions();
     if ([2, 5, 8].includes(this.player)) {
       delete pokeOptions[this.state.pokemon[this.player - 1]];
     }
@@ -347,37 +365,71 @@ class Game extends Component {
     this.specialTileAction = true;
     let newPosition =
       this.state.positions[this.player] + this.state.roll * this.multiplier;
-    if (!this.evolved) {
-      let data = tileAction.stopAtGym({
-        space: newPosition,
-        positions: this.state.positions,
-        thisPlayer: this.player
-      });
-      this.gym = data.gym;
-      newPosition = data.newPosition;
+    if(this.state.gen === 1){
+      if (!this.evolved) {
+        let data = tileAction.stopAtGym({
+          space: newPosition,
+          positions: this.state.positions,
+          thisPlayer: this.player,
+          gen: this.state.gen
+        });
+        this.gym = data.gym;
+        newPosition = data.newPosition;
+      }
+      if (
+        this.evolved &&
+        tileAction.gymFive({
+          oldPosition: this.state.positions[this.player],
+          newPosition: newPosition
+        })
+      ) {
+        this.evolved = false;
+      }
+      this.spaceMutation_gen1(newPosition, this.player);
     }
-    if (
-      this.evolved &&
-      tileAction.gymFive({
-        oldPosition: this.state.positions[this.player],
+    else if(this.state.gen === 2){
+      if(!this.slowpoke){
+        let data = tileAction.stopAtGym({
+          space: newPosition,
+          positions: this.state.positions,
+          thisPlayer: this.player,
+          gen: this.state.gen
+        });
+        this.gym = data.gym;
+        newPosition = data.newPosition;
+      } else {
+        this.slowpoke = false;
+      }
+      newPosition = tileAction.ilexReset({
+        roll: this.state.roll,
+        position: this.state.positions[this.player],
         newPosition: newPosition
       })
-    ) {
-      this.evolved = false;
+      this.spaceMutation_gen2(newPosition, this.player);
     }
-    this.spaceMutation(newPosition, this.player);
   };
 
   nextPlayer = () => {
     let players = Object.keys(this.state.positions).length;
     let newTurn = this.state.turn;
-    if (this.state.turn < players) {
-      newTurn = this.state.turn + 1;
-      if (this.state.positions[newTurn] === "REMOVED") {
-        this.nextPlayer();
+    if(!this.state.reversedOrder){
+      if (this.state.turn < players) {
+        newTurn = this.state.turn + 1;
+        if (this.state.positions[newTurn] === "REMOVED") {
+          this.nextPlayer();
+        }
+      } else {
+        newTurn = 1;
       }
     } else {
-      newTurn = 1;
+      if (this.state.turn > 1) {
+        newTurn = this.state.turn - 1;
+        if (this.state.positions[newTurn] === "REMOVED") {
+          this.nextPlayer();
+        }
+      } else {
+        newTurn = players;
+      }
     }
     socket.emit("nextTurn", {
       room: this.lobbyChannel,
@@ -444,7 +496,7 @@ class Game extends Component {
   onHaunterSelected = player => {
     this.specialTileAction = false;
     let newPosition = this.state.positions[player] - 10;
-    this.spaceMutation(newPosition, player);
+    this.spaceMutation_gen1(newPosition, player);
   };
 
   evictPlayer = player => {
@@ -491,7 +543,7 @@ class Game extends Component {
     }
   };
 
-  spaceMutation = (newPosition, player) => {
+  spaceMutation_gen1 = (newPosition, player) => {
     let playersBattling = [];
     newPosition = tileAction.onAbra(newPosition);
     this.multiplier = tileAction.bike(newPosition);
@@ -530,7 +582,8 @@ class Game extends Component {
           player: player,
           newSpace: newPosition,
           battling: playersBattling,
-          caterpie: caterpiePlayer
+          caterpie: caterpiePlayer,
+          reversed: false
         });
 
         this.setState(prevState => ({
@@ -543,7 +596,8 @@ class Game extends Component {
             [player]: pokemonSwitch
           },
           battling: playersBattling,
-          caterpie: caterpiePlayer
+          caterpie: caterpiePlayer,
+          reversed: false
         }));
       });
     } else if (tileAction.evolve(newPosition)) {
@@ -567,7 +621,8 @@ class Game extends Component {
           player: player,
           newSpace: newPosition,
           battling: playersBattling,
-          caterpie: caterpiePlayer
+          caterpie: caterpiePlayer,
+          reversed: false
         });
 
         this.setState(prevState => ({
@@ -576,7 +631,8 @@ class Game extends Component {
             [player]: newPosition
           },
           battling: playersBattling,
-          caterpie: caterpiePlayer
+          caterpie: caterpiePlayer,
+          reversedOrder: false
         }));
       });
     } else {
@@ -596,7 +652,8 @@ class Game extends Component {
         player: player,
         newSpace: newPosition,
         battling: playersBattling,
-        caterpie: caterpiePlayer
+        caterpie: caterpiePlayer,
+        reversed: false
       });
 
       this.setState(prevState => ({
@@ -609,9 +666,103 @@ class Game extends Component {
           [player]: pokemonSwitch
         },
         battling: playersBattling,
-        caterpie: caterpiePlayer
+        caterpie: caterpiePlayer,
+        reversedOrder: false
       }));
     }
+  };
+
+  spaceMutation_gen2 = (newPosition, player) => {
+    let playersBattling = [];
+    let reversed = tileAction.mantine(newPosition) ? !this.state.reversedOrder : this.state.reversedOrder;
+
+    if(this.backwardsRolls > 0){
+      this.backwardsRolls--;
+      if(this.backwardsRolls === 0){
+        this.multiplier = 1;
+      }
+    }
+
+    if (tileAction.slowpoke(newPosition)) {
+      Swal.fire(alerts.SLOWPOKE_TAIL).then(result => {
+        if (result.value) {
+          this.slowpoke = true;
+        }
+      });
+    } else if(tileAction.swap(newPosition)) {
+      let options = {};
+      let pokemonNames = this.pokemonOptions();
+      let keys = Object.keys(this.state.pokemon);
+      for(let value in keys){
+        console.log(keys[value]);
+        console.log(this.player);
+        if (parseInt(keys[value]) !== this.player) {
+          let optionName = "Player " + keys[value];
+          if(this.state.playerNames[keys[value]] !== null){
+            optionName = this.state.playerNames[keys[value]];
+          }
+          optionName += ": " + pokemonNames[this.state.pokemon[keys[value]]];
+          options[keys[value]] = optionName;
+        }
+      }
+      Swal.fire(alerts.SWAP_POKEMON(options)).then(result => {
+        if(result.value !== ""){
+          let newPokemon = this.state.pokemon[result.value];
+          let oldPokemon = this.state.pokemon[this.player];
+
+          socket.emit("pokemon", {
+            room: this.lobbyChannel,
+            player: this.player,
+            pokemon: newPokemon
+          });
+
+          socket.emit("pokemon", {
+            room: this.lobbyChannel,
+            player: result.value,
+            pokemon: oldPokemon
+          });
+          this.setState(prevState => ({
+            pokemon: {
+              ...prevState.pokemon,
+              [this.player]: newPokemon,
+              [result.value]: oldPokemon
+            }
+          }));
+        }
+      });
+    } else if(tileAction.snubbull(newPosition)) {
+      this.multiplier = -1;
+      this.backwardsRolls = 2;
+    }
+
+    if (!this.gym) {
+      playersBattling.push(this.player);
+      for (const player in Object.keys(this.state.positions)) {
+        if (parseInt(player) !== this.player) {
+          if (this.state.positions[player] === newPosition) {
+            playersBattling.push(parseInt(player));
+          }
+        }
+      }
+    }
+
+    socket.emit("move", {
+      room: this.lobbyChannel,
+      player: player,
+      newSpace: newPosition,
+      battling: playersBattling,
+      caterpie: 0,
+      reversed: reversed
+    });
+
+    this.setState(prevState => ({
+      positions: {
+        ...prevState.positions,
+        [player]: newPosition
+      },
+      battling: playersBattling,
+      reversedOrder: reversed
+    }));
   };
 
   whoseTurn = () => {
@@ -639,6 +790,21 @@ class Game extends Component {
     });
   };
 
+  changeGen = move => {
+    const newGen = this.state.gen + move;
+    if(this.state.gen === 2 && move === 1){
+      return;
+    }
+    if(this.state.gen === 1 && move === -1){
+      return;
+    }
+    else {
+      this.setState({
+        gen: newGen
+      });
+    }
+  };
+
   render() {
     let pokeChoice = false;
     if (this.player === 1) {
@@ -654,6 +820,8 @@ class Game extends Component {
             disabled={this.state.isDisabled}
             create={this.onPressCreate}
             join={this.onPressJoin}
+            gen={this.state.gen}
+            changeGen={this.changeGen}
           />
         )}
         {this.state.isPlaying && (
@@ -676,7 +844,7 @@ class Game extends Component {
               name={this.newName}
               names={this.state.playerNames}
             />
-            {tileAction.haunter(this.state.positions[this.player]) &&
+            {tileAction.haunter(this.state.positions[this.player]) && this.state.gen === 1 &&
               this.specialTileAction && (
                 <div className="haunter">
                   <img src={require("./Images/haunter.png")} alt="haunter" />
@@ -699,6 +867,7 @@ class Game extends Component {
                 pokemon={this.state.pokemon}
                 player={this.player}
                 names={this.state.playerNames}
+                gen={this.state.gen}
               />
               {this.state.battling !== undefined &&
                 this.state.battling.length > 1 && (
@@ -713,6 +882,7 @@ class Game extends Component {
                     pokemon={this.state.pokemon}
                     nextBattle={this.nextBattle}
                     names={this.state.playerNames}
+                    gen={this.state.gen}
                   />
                 )}
               {this.state.pokemon[this.player] === null &&

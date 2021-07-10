@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import introPic from "../spaces/introBoard.png";
+import introPicGen1 from "../spacesGen1/introBoard.png";
+import introPicGen2 from "../spacesGen2/introBoard-gen2.png";
 
 class Intro extends Component {
   constructor(props) {
@@ -7,12 +8,30 @@ class Intro extends Component {
 
     this.create = this.props.create.bind(this);
     this.join = this.props.join.bind(this);
+    this.changeGen = this.props.changeGen.bind(this);
+
+    this.intro = [introPicGen1, introPicGen2];
   }
   render() {
+
     return (
       <div className="index">
         <div className="intro">
-          <img src={introPic} alt="" />
+        <button 
+          className="prev-gen-button"
+          disabled={this.props.gen === 1}
+          onClick={e => this.changeGen(-1)}
+          >
+            {"<"}
+        </button>
+          <img width="500" height="500" src={this.intro[this.props.gen - 1]} alt="" />
+        <button 
+          className="next-gen-button"
+          disabled={this.props.gen === 2}
+          onClick={e => this.changeGen(1)}
+          >
+            {">"}
+        </button>
         </div>
         <div className="button-container">
           <div className="create-div">

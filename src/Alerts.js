@@ -81,6 +81,17 @@ export const PIKACHU = {
   allowOutsideClick: false
 };
 
+export const SLOWPOKE_TAIL = {
+  title: "Chop off the tail?",
+  text: "Wield the power of the slowpoke tail",
+  showCancelButton: "false",
+  confirmButtonText: "Gimme Dat",
+  cancelButtonText: "No Thanks",
+  allowEscapeKey: false,
+  allowEnterKey: false,
+  allowOutsideClick: false
+};
+
 export const EVOLVE = {
   title: "Evolve?",
   text: "Evolve and skip next gym",
@@ -155,4 +166,26 @@ export const NONEXISTENT_ROOM = {
     confirmButton: "join-button-class",
     cancelButton: "join-button-class"
   }
+};
+
+export const SWAP_POKEMON = options => {
+  return {
+    title: "Swap Pokemon?",
+    position: "top",
+    input: "select",
+    inputOptions: options,
+    allowOutsideClick: false,
+    inputPlaceholder: "",
+    showCancelButton: false,
+    confirmButtonColor: "rgb(208,33,41)",
+    confirmButtonText: "OK",
+    width: 275,
+    padding: "0.7em",
+    customClass: {
+      heightAuto: false,
+      popup: "popup-class",
+      confirmButton: "join-button-class",
+      cancelButton: "join-button-class"
+    }
+  };
 };
