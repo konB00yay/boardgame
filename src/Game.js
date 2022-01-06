@@ -12,7 +12,7 @@ import * as tileAction from "./SpecialTiles";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactGA from "react-ga";
 
-const trackingId = "G-XSMF1T0XXM";
+const trackingId = "UA-188425910-1";
 ReactGA.initialize(trackingId);
 
 let socket_url = "http://localhost:4000";
