@@ -10,6 +10,10 @@ import shortid from "shortid";
 import { io } from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ReactGA from "react-ga";
+
+const trackingId = "G-XSMF1T0XXM";
+ReactGA.initialize(trackingId);
 
 let socket_url = "http://localhost:4000";
 if (process.env.NODE_ENV === "production") {
@@ -196,6 +200,11 @@ class Game extends Component {
 
     Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
 
+    ReactGA.event({
+      category: 'User',
+      action: 'Started a Game'
+    });
+
     this.setState(prevState => ({
       playerNames: {
         ...prevState.playerNames,
@@ -250,6 +259,10 @@ class Game extends Component {
   };
 
   joinRoom = value => {
+    ReactGA.event({
+      category: 'User',
+      action:'Joined a Game'
+    })
     this.roomId = value;
     this.lobbyChannel = "pdglobby--" + this.roomId;
 
@@ -444,6 +457,10 @@ class Game extends Component {
   gameOver = () => {
     Object.entries(this.state.positions).map(([key, value]) => {
       if (value === 72) {
+        ReactGA.event({
+          category: 'User',
+          action:'Finished a Game'
+        });
         Swal.fire(alerts.PLAYER_WINS(key)).then(result => {
           socket.emit("reset", {
             room: this.lobbyChannel
