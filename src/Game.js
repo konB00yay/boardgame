@@ -10,10 +10,33 @@ import shortid from "shortid";
 import { io } from "socket.io-client";
 import * as tileAction from "./SpecialTiles";
 import "bootstrap/dist/css/bootstrap.min.css";
-import ReactGA from "react-ga";
+import TagManager from "react-gtm-module";
 
-const trackingId = "UA-188425910-1";
-ReactGA.initialize(trackingId);
+const tagManagerArgs = {
+  gtmId: 'GTM-KB6WG7D'
+};
+TagManager.initialize(tagManagerArgs);
+
+const game_start = {
+  dataLayer: {
+    event: "game_start"
+  },
+  dataLayerName: "PageDataLayer"
+};
+
+const game_join = {
+  dataLayer: {
+    event: "game_join"
+  },
+  dataLayerName: "PageDataLayer"
+};
+
+const game_end = {
+  dataLayer: {
+    event: "game_end"
+  },
+  dataLayerName: "PageDataLayer"
+};
 
 let socket_url = "http://localhost:4000";
 if (process.env.NODE_ENV === "production") {
@@ -200,10 +223,7 @@ class Game extends Component {
 
     Swal.fire(alerts.SHARE_WITH_FRIENDS(this.roomId));
 
-    ReactGA.event({
-      category: 'User',
-      action: 'Started a Game'
-    });
+    TagManager.dataLayer(game_start);
 
     this.setState(prevState => ({
       playerNames: {
@@ -259,10 +279,7 @@ class Game extends Component {
   };
 
   joinRoom = value => {
-    ReactGA.event({
-      category: 'User',
-      action:'Joined a Game'
-    })
+    TagManager.dataLayer(game_join);
     this.roomId = value;
     this.lobbyChannel = "pdglobby--" + this.roomId;
 
@@ -457,10 +474,7 @@ class Game extends Component {
   gameOver = () => {
     Object.entries(this.state.positions).map(([key, value]) => {
       if (value === 72) {
-        ReactGA.event({
-          category: 'User',
-          action:'Finished a Game'
-        });
+        TagManager.dataLayer(game_end);
         Swal.fire(alerts.PLAYER_WINS(key)).then(result => {
           socket.emit("reset", {
             room: this.lobbyChannel
